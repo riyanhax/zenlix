@@ -1,0 +1,31 @@
+<table style="border: 1px solid black">
+    <tr>
+        <td>№</td>
+        <td>Дата</td>
+        <td>События</td>
+        <td>№ заявки</td>
+        <td>Сообщение</td>
+        <td>Зона работ</td>
+        <td>Тип работ</td>
+        <td>Создал</td>
+        <td>Статус</td>
+        <td>Выполнил</td>
+        <td>Затрачено</td>
+    </tr>
+
+    {% for key,item in data %}
+        <tr>
+            <td></td>
+            <td>{{ item.last_update }}</td>
+            <td>{{ key }}</td>
+            <td>{{ item.id }}</td>
+            <td>{{ item.msg }}</td>
+            <td>{{ item.subj_pl }}</td>
+            <td>{{ item.subj }}</td>
+            <td>{{ item.user_init_id }}</td>
+            <td>{{ item.status }}</td>
+            <td>{{ item.ok_by }}</td>
+            <td>пока нету</td>
+        </tr>
+    {% endfor %}
+</table>

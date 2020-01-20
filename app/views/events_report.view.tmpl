@@ -1,0 +1,64 @@
+<section class="content">
+<div class="row">
+    <div class="col-md-3 col-lg-3">
+        <div class="row">
+            <div class="box-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-list"></i></span>
+                                <select class="form-control input-sm" id="department" name="department">
+                                    <option value="-1">Не выбрано</option>
+                                    <option value="0">{{ HELP_all }}</option>
+                                    {% for item in departments %}
+                                        <option value="{{ item.id }}">{{ item.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-list"></i></span>
+                                <select class="form-control input-sm" id="user" name="user">
+                                    <option value="-1">Не выбрано</option>
+                                    <option value="0">{{ HELP_all }}</option>
+                                    {% for item in users %}
+                                        <option value="{{ item.id }}">{{ item.login }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="input-group ">
+                            <span class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                                <input type="text" name="reservation" id="reservation" class="form-control input-sm" value="{{ date }} - {{ date }}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <button class="btn btn-info btn-block btn-sm" id="eventsreport">Сгенерировать</button>
+                        </div>
+                    </div>
+                    <a href='{{ link }}'>xls</a>
+                    <input type="hidden" id="start_time" value="{{ date }}"/>
+                    <input type="hidden" id="stop_time" value="{{ date }}"/>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9 col-lg-9">
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 col-lg-12" id="report_response"></div>
+</div>
+</section>

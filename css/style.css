@@ -1,0 +1,257 @@
+@font-face {
+	font-family: 'icomoon';
+	src:url('fonts/icomoon.eot?-o8uhxy');
+	src:url('fonts/icomoon.eot?#iefix-o8uhxy') format('embedded-opentype'),
+		url('fonts/icomoon.woff?-o8uhxy') format('woff'),
+		url('fonts/icomoon.ttf?-o8uhxy') format('truetype'),
+		url('fonts/icomoon.svg?-o8uhxy#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon-svg:before {
+	content: "\e600";
+}
+
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Sans Pro'), local('SourceSansPro-Regular'), url('fonts/ODelI1aHBYDBqgeIAH2zlCxe5Tewm2_XWfbGchcXw4g.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+1EA0-1EF1, U+20AB;
+}
+
+
+    
+.direct-chat-messages, .direct-chat-contacts {
+-webkit-transition: -webkit-transform .5s ease-in-out;
+-moz-transition: -moz-transform .5s ease-in-out;
+-o-transition: -o-transform .5s ease-in-out;
+transition: transform .5s ease-in-out;
+}
+
+
+.direct-chat-messages {
+-webkit-transform: translate(0, 0);
+-ms-transform: translate(0, 0);
+-o-transform: translate(0, 0);
+transform: translate(0, 0);
+padding: 10px;
+
+overflow: auto;
+}
+
+.direct-chat-msg {
+margin-bottom: 10px;
+}
+.direct-chat-msg, .direct-chat-text {
+display: block;
+}
+.direct-chat-info {
+display: block;
+margin-bottom: 2px;
+font-size: 12px;
+}
+.direct-chat-name {
+font-weight: 600;
+}
+.direct-chat-timestamp {
+color: #999;
+}
+.direct-chat-img {
+border-radius: 50%;
+float: left;
+width: 40px;
+height: 40px;
+}
+.direct-chat-text {
+border-radius: 5px;
+position: relative;
+padding: 5px 10px;
+background: #F9F9F9;
+border: 1px solid #F7F7F7;
+margin: 5px 0 0 50px;
+color: #444;
+}
+.direct-chat-msg, .direct-chat-text {
+display: block;
+}
+
+.direct-chat-text:before {
+border-width: 6px;
+margin-top: -6px;
+}
+.direct-chat-text:after, .direct-chat-text:before {
+position: absolute;
+right: 100%;
+top: 15px;
+border: solid transparent;
+border-right-color: #F7F7F7;
+content: ' ';
+height: 0;
+width: 0;
+pointer-events: none;
+}
+
+.direct-chat-text:after {
+border-width: 5px;
+margin-top: -5px;
+}
+.direct-chat-text:after, .direct-chat-text:before {
+position: absolute;
+right: 100%;
+top: 15px;
+border: solid transparent;
+border-right-color: #F7F7F7;
+content: ' ';
+height: 0;
+width: 0;
+pointer-events: none;
+}
+.direct-chat-msg:before, .direct-chat-msg:after {
+content: " ";
+display: table;
+}
+.direct-chat-msg:after {
+clear: both;
+}
+.direct-chat-msg:before, .direct-chat-msg:after {
+content: " ";
+display: table;
+}
+img.online {
+    border: 1px solid #00a65a;
+}
+img.offline {
+border: 1px solid #f56954;
+}
+    
+
+.status_icon_online {
+	color:rgba(48, 166, 0, 0.44);
+}
+.status_icon_offline {
+	color:rgba(166, 0, 0, 0.44);
+}
+
+
+/* Sticky footer styles
+-------------------------------------------------- */
+        .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+            padding: 3px;
+        }
+
+        .bold_for_new {
+            font-weight: bold;
+        }
+
+        .notyCloseButton {
+            position: relative;
+            float: right;
+        }
+        
+        
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto;
+  /* Negative indent footer by its height */
+  margin: 0 auto -60px;
+  /* Pad bottom by footer height */
+  padding: 0 0 60px;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+.posada_class{
+   width: 240px;
+}
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+.pointer-cursor {
+cursor: pointer;
+}
+
+.pagination {
+	margin: 0px 0;
+}
+
+.ui-autocomplete {
+position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  float: left;
+  display: none;
+  min-width: 160px;
+  _width: 160px;
+  padding: 4px 0;
+  margin: 2px 0 0 0;
+  list-style: none;
+  background-color: #ffffff;
+  border-color: #ccc;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: solid;
+  border-width: 1px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+
+}
+.ui-autocomplete .source:hover {
+    background: orange;
+}
+
+.ui-menu .ui-menu-item a {
+display: block;
+    padding: 3px 15px;
+    clear: both;
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 18px;
+    color: #555555;
+    white-space: nowrap;
+}
+
+.ui-menu .ui-menu-item a:hover {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 12px;
+      background-color: #0088cc;
+      border-radius: 0px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      background-image: none;
+}
+
