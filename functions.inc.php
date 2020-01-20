@@ -6060,11 +6060,9 @@ function get_last_ticket($menu, $id) {
                 
                 //$stmt->execute(array(':units' => $units));
                 $stmt->execute($vv);
+                $max = $stmt->fetch(PDO::FETCH_NUM);
+                $max_id = $max[0];
             }
-            
-            $max = $stmt->fetch(PDO::FETCH_NUM);
-            
-            $max_id = $max[0];
         } 
         else if ($priv_val == "1") {
             
