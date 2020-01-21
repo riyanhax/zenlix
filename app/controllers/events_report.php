@@ -10,6 +10,8 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
         include("head.inc.php");
         include("navbar.inc.php");
 
+        global $CONF_HD;
+
         $Events  = new EventsReport($CONF_HD['xls_report_path']);
         $basedir = dirname(dirname(__FILE__));
 
