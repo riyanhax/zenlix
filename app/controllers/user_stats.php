@@ -48,6 +48,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                 }
             }
 
+            var_dump($priv_val);
             var_dump($ulist);
             
             $basedir = dirname(dirname(__FILE__));
