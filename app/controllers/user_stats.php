@@ -27,7 +27,9 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                 $ec = explode(',', $row['unit']);// array[13]
                 
                 $result = array_intersect($ee, $ec);
-                
+                var_dump($result);
+
+
                 if ($result) {
                     //echo($row['label']);
                     $row['label'] = $row['label'];
