@@ -81,7 +81,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                     'STATS_make' => lang('STATS_make') ,
                     'EXT_graph_user_ext2' => lang('EXT_graph_user_ext2') ,
                     'EXT_stats_main_todo' => lang('EXT_stats_main_todo'),
-                    'link' => 'getXlsReport'/*'/report.xls'*/,
+                    'link' => 'getreport'/*'/report.xls'*/,
                 ));
             } catch(Exception $e) {
                 die('ERROR: ' . $e->getMessage());

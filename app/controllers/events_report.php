@@ -31,7 +31,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                 'date'         => date("Y-m-d"),
                 'HELP_all'     => lang('HELP_all'),
                 //'link'         => '/report.xls',
-                'link' => 'getXlsReport',
+                'link' => 'getreport',
                 'departments'  => $Events->getDepartments(),
                 'users'        => $Events->getUsers(),
             );
