@@ -5962,6 +5962,8 @@ values (:comment, :n, :user_comment, :tid_comment)');
         }
 
         if ($mode === 'get_users_by_dep') {
+            global $CONF_HD;
+
             $department = $_POST['department'];
 
             $Events = new EventsReport($CONF_HD['xls_report_path']);
@@ -7587,6 +7589,8 @@ $init_icon=NULL;
         }
 
         if ($mode === 'events_sort') {
+            global $CONF_HD;
+
             $column = $_POST['column'];
 
             $Events = new EventsReport($CONF_HD['xls_report_path']);
