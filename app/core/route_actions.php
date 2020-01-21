@@ -869,6 +869,7 @@ function postAction() {
 }
 
 function getXlsReport() {
+    global $CONF_HD;
     $privs = get_privs();
     if ($privs === 'USER') {
         header('Content-Type: text/html; charset=UTF-8');
@@ -877,7 +878,7 @@ function getXlsReport() {
         header ( "Cache-Control: no-cache, must-revalidate" );
         header ( "Pragma: no-cache" );
         header ( "Content-type: application/vnd.ms-excel" );
-        header ( "Content-Disposition: attachment; filename=report.xls" );
+        header ( "Content-Disposition: attachment; filename=" . $CONF_HD['xls_report_path'] );
     }
 }
 

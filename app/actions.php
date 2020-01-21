@@ -5472,7 +5472,8 @@ values (:comment, :n, :user_comment, :tid_comment)');
             }
 
             //$sheet->mergeCells('A1:H1');
-            $objWriter->save('/home/admin/web/hd.example.com/public_html/report.xls');
+            //$objWriter->save('/home/admin/web/hd.example.com/public_html/report.xls');
+            $objWriter->save($CONF_HD['xls_report_path']);
         }
         
         if ($mode == "get_new_ticket_log") {

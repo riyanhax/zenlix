@@ -30,7 +30,8 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                 'name_of_firm' => $CONF['name_of_firm'],
                 'date'         => date("Y-m-d"),
                 'HELP_all'     => lang('HELP_all'),
-                'link'         => '/report.xls',
+                //'link'         => '/report.xls',
+                'link' => 'getXlsReport',
                 'departments'  => $Events->getDepartments(),
                 'users'        => $Events->getUsers(),
             );

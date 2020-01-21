@@ -144,7 +144,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                     }
                 }
 
-                $objWriter->save('/home/admin/web/hd.example.com/public_html/report.xls');
+                $objWriter->save($CONF_HD['xls_report_path']);
                 // подгружаем шаблон
                 $template = $twig->loadTemplate('all_stats.view.tmpl');
 
@@ -176,7 +176,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                     'ALLSTATS_user_out_all' => lang('ALLSTATS_user_out_all'),
                     'ALLSTATS_user_out_all_not' => lang('ALLSTATS_user_out_all_not'),
                     'stat_arr' => $stat_arr,
-                    'link' => '/report.xls',
+                    'link' => 'getXlsReport'/*'/report.xls'*/,
                 ));
             } catch (Exception $e) {
                 die('ERROR: ' . $e->getMessage());
