@@ -176,7 +176,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                     'ALLSTATS_user_out_all' => lang('ALLSTATS_user_out_all'),
                     'ALLSTATS_user_out_all_not' => lang('ALLSTATS_user_out_all_not'),
                     'stat_arr' => $stat_arr,
-                    'link' => 'getreport'/*'/report.xls'*/,
+                    'link' => '/report.xls',
                 ));
             } catch (Exception $e) {
                 die('ERROR: ' . $e->getMessage());
