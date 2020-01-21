@@ -5924,6 +5924,7 @@ values (:comment, :n, :user_comment, :tid_comment)');
          * Display report by events (produced by arava newbie.jedicoder@gmail.com)
          */
         if ($mode === 'getEventsReport') {
+            global $CONF_HD;
             try {
                 if ($_POST) {
                     $Events = new EventsReport($CONF_HD['xls_report_path']);
