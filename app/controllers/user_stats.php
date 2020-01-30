@@ -27,7 +27,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                 $ec = explode(',', $row['unit']);// array[13]
                 
                 $result = array_intersect($ee, $ec);
-                
+
                 if ($result) {
                     //echo($row['label']);
                     $row['label'] = $row['label'];
@@ -39,9 +39,15 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                     else if (get_user_status_text($row['value']) == "offline") {
                         $s = "offline";
                     }
-                    
+
                     array_push($ulist, array(
                         's' => $s,
+                        'value' => $row['value'],
+                        'nameshort' => nameshort($row['label'])
+                    ));
+                } else {
+                    array_push($ulist, array(
+                        's' => 'offline',
                         'value' => $row['value'],
                         'nameshort' => nameshort($row['label'])
                     ));
