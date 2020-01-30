@@ -767,13 +767,10 @@ function send_pushbullet($type_op, $lang, $user_mail, $ticket_id) {
             $p = new PushBullet(get_conf_param('pb_api'));
             
             //email, title, msg
-            $response = $p->pushNote($user_mail, $tn, $msg);
-
-            print json_encode($response);
+            $p->pushNote($user_mail, $tn, $msg);
         }
         catch(PushBulletException $e) {
-            print json_encode($e->getMessage());
-            //die($e->getMessage());
+            die($e->getMessage());
         }
     } 
     else if ($type_op == "ticket_lock") {
