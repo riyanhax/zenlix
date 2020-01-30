@@ -26,6 +26,6 @@ function get_conf_param($in) {
 $p = new PushBullet(get_conf_param('pb_api'));
 
 //email, title, msg
-$response = $p->pushNote('newbie.jedicoder@gmail.com', 'PushBullet-Unit-test', 'unit testing');
+$response = $p->pushNote('vermyter@gmail.com', 'PushBullet-Unit-test', 'unit testing');
 
 var_dump($response);
