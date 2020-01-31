@@ -2233,18 +2233,16 @@ foreach ($res1 as $qrow) {
         $stmt->execute(array(
             ':tid' => $val
         ));
-        $usr_info = $stmt->fetch(PDO::FETCH_ASSOC);
-        $pb = $usr_info['pb'];
-        $usr_mail = strtolower($usr_info['email']);
-        $usr_lang = $usr_info['lang'];
-        $mob = $usr_info['mob'];
+        $usr_info   = $stmt->fetch(PDO::FETCH_ASSOC);
+        $pushbullet = $usr_info['pb'];
+        $usr_mail   = strtolower($usr_info['email']);
+        $usr_lang   = $usr_info['lang'];
+        $mob        = $usr_info['mob'];
         
         $usr_id = $usr_info['id'];
-        
-        // $lb=$fio['lock_by'];
-        
+
         if (get_conf_param('pb_active') == "true") {
-            if ($pb) {
+            if ($pushbullet) {
                 send_pushbullet($type_op, $usr_lang, $usr_mail, $ticket_id);
             }
         }
