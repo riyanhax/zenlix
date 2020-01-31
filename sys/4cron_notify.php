@@ -715,50 +715,27 @@ function send_pushbullet($type_op, $lang, $user_mail, $ticket_id) {
     //кому?
     if ($ticket_res['user_to_id'] <> 0) {
         $to_text = "" . name_of_user_ret($to_id) . "";
-    } 
-    else if ($ticket_res['user_to_id'] == 0) {
+    } else if ($ticket_res['user_to_id'] == 0) {
         $to_text = view_array(get_unit_name_return($unit_id));
     }
     
     if ($type_op == "ticket_create") {
-        $tn = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_new . ")";
+        $theme = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_new . ")";
+
         $msg = lang($lang, 'MAIL_subj') . ": " . $s . "\r\n";
         $msg.= lang($lang, 'MAIL_created') . ": " . $uin . "\r\n";
         $msg.= lang($lang, 'MAIL_to') . ": " . $to_text . "\r\n";
         $msg.= lang($lang, 'MAIL_worker') . ": " . $nou . "\r\n";
         $msg.= lang($lang, 'MAIL_msg') . ": " . $m . "\r\n";
-        
-            try {
-            $p = new PushBullet(get_conf_param('pb_api'));
-            
-            //email, title, msg
-            $response = $p->pushNote($user_mail, $tn, $msg);
-        }
-        catch(PushBulletException $e) {
-            $response = $e->getMessage();
-        } finally {
-                funkit_setlog('ticket:create', $response);
-            }
-    } 
-    else if ($type_op == "ticket_refer") {
-        $tn = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_refer . ")";
+    } else if ($type_op == "ticket_refer") {
+        $theme = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_refer . ")";
+
         $msg = lang($lang, 'MAIL_subj') . ": " . $s . "\r\n";
         $msg.= lang($lang, 'MAIL_created') . ": " . $uin . "\r\n";
         $msg.= lang($lang, 'MAIL_to') . ": " . $to_text . "\r\n";
         $msg.= lang($lang, 'MAIL_worker') . ": " . $nou . "\r\n";
         $msg.= lang($lang, 'MAIL_msg') . ": " . $m . "\r\n";
-        
-        try {
-            $p = new PushBullet(get_conf_param('pb_api'));
-            
-            //email, title, msg
-            $p->pushNote($user_mail, $tn, $msg);
-        }
-        catch(PushBulletException $e) {
-            die($e->getMessage());
-        }
-    } 
-    else if ($type_op == "ticket_comment") {
+    } else if ($type_op == "ticket_comment") {
         $theme = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_comment . ")";
 
         $msg = lang($lang, 'MAIL_subj') . ": " . $s . "\r\n";
@@ -766,99 +743,52 @@ function send_pushbullet($type_op, $lang, $user_mail, $ticket_id) {
         $msg.= lang($lang, 'MAIL_to') . ": " . $to_text . "\r\n";
         $msg.= lang($lang, 'MAIL_worker') . ": " . $nou . "\r\n";
         $msg.= lang($lang, 'MAIL_msg') . ": " . $m . "\r\n";
-        
-        try {
-            $p = new PushBullet(get_conf_param('pb_api'));
-            
-            //email, title, msg
-            $args = [
-                $user_mail,
-                $theme,
-                $msg
-            ];
+    } else if ($type_op == "ticket_lock") {
+        $theme = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_lock . ")";
 
-            funkit_setlog('ticket:comment -> passed args', $args);
-            $response = $p->pushNote($user_mail, $theme, $msg);
-        }
-        catch(PushBulletException $e) {
-            $response = $e->getMessage();
-        } finally {
-            funkit_setlog('ticket:comment', json_encode($response));
-        }
-    } 
-    else if ($type_op == "ticket_lock") {
-        
-        $tn = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_lock . ")";
         $msg = lang($lang, 'MAIL_subj') . ": " . $s . "\r\n";
         $msg.= lang($lang, 'MAIL_created') . ": " . $uin . "\r\n";
         $msg.= lang($lang, 'MAIL_to') . ": " . $to_text . "\r\n";
         $msg.= lang($lang, 'MAIL_worker') . ": " . $nou . "\r\n";
         $msg.= lang($lang, 'MAIL_msg') . ": " . $m . "\r\n";
-        
-        try {
-            $p = new PushBullet(get_conf_param('pb_api'));
-            
-            //email, title, msg
-            $p->pushNote($user_mail, $tn, $msg);
-        }
-        catch(PushBulletException $e) {
-            die($e->getMessage());
-        }
-    } 
-    else if ($type_op == "ticket_unlock") {
-        $tn = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_unlock . ")";
+    } else if ($type_op == "ticket_unlock") {
+        $theme = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_unlock . ")";
+
         $msg = lang($lang, 'MAIL_subj') . ": " . $s . "\r\n";
         $msg.= lang($lang, 'MAIL_created') . ": " . $uin . "\r\n";
         $msg.= lang($lang, 'MAIL_to') . ": " . $to_text . "\r\n";
         $msg.= lang($lang, 'MAIL_worker') . ": " . $nou . "\r\n";
         $msg.= lang($lang, 'MAIL_msg') . ": " . $m . "\r\n";
-        
-        try {
-            $p = new PushBullet(get_conf_param('pb_api'));
-            
-            //email, title, msg
-            $p->pushNote($user_mail, $tn, $msg);
-        }
-        catch(PushBulletException $e) {
-            die($e->getMessage());
-        }
     } 
     else if ($type_op == "ticket_ok") {
-        $tn = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_ok . ")";
+        $theme = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_ok . ")";
+
         $msg = lang($lang, 'MAIL_subj') . ": " . $s . "\r\n";
         $msg.= lang($lang, 'MAIL_created') . ": " . $uin . "\r\n";
         $msg.= lang($lang, 'MAIL_to') . ": " . $to_text . "\r\n";
         $msg.= lang($lang, 'MAIL_worker') . ": " . $nou . "\r\n";
         $msg.= lang($lang, 'MAIL_msg') . ": " . $m . "\r\n";
-        
-        try {
-            $p = new PushBullet(get_conf_param('pb_api'));
-            
-            //email, title, msg
-            $p->pushNote($user_mail, $tn, $msg);
-        }
-        catch(PushBulletException $e) {
-            die($e->getMessage());
-        }
     } 
     else if ($type_op == "ticket_no_ok") {
-        $tn = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_no_ok . ")";
+        $theme = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_no_ok . ")";
+
         $msg = lang($lang, 'MAIL_subj') . ": " . $s . "\r\n";
         $msg.= lang($lang, 'MAIL_created') . ": " . $uin . "\r\n";
         $msg.= lang($lang, 'MAIL_to') . ": " . $to_text . "\r\n";
         $msg.= lang($lang, 'MAIL_worker') . ": " . $nou . "\r\n";
         $msg.= lang($lang, 'MAIL_msg') . ": " . $m . "\r\n";
-        
-        try {
-            $p = new PushBullet(get_conf_param('pb_api'));
-            
-            //email, title, msg
-            $p->pushNote($user_mail, $tn, $msg);
-        }
-        catch(PushBulletException $e) {
-            die($e->getMessage());
-        }
     }
+
+    try {
+        $Bullet = new PushBullet(get_conf_param('pb_api'));
+
+        //email, title, msg
+        $Bullet->pushNote($user_mail, isset($theme) ? $theme : 'default theme', isset($msg) ? $msg : 'default message');
+    }
+    catch(PushBulletException $e) {
+        $e->getMessage();
+    }
+
 }
 
 function check_user_devices($id) {
