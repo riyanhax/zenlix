@@ -783,7 +783,7 @@ function send_pushbullet($type_op, $lang, $user_mail, $ticket_id) {
         catch(PushBulletException $e) {
             $response = $e->getMessage();
         } finally {
-            funkit_setlog('ticket:comment', $response);
+            funkit_setlog('ticket:comment', json_encode($response));
         }
     } 
     else if ($type_op == "ticket_lock") {
