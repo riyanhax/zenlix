@@ -770,6 +770,13 @@ function send_pushbullet($type_op, $lang, $user_mail, $ticket_id) {
             $p = new PushBullet(get_conf_param('pb_api'));
             
             //email, title, msg
+            $args = [
+                $user_mail,
+                $tn,
+                $msg
+            ];
+
+            funkit_setlog('ticket:comment -> passed args', $args);
             $response = $p->pushNote($user_mail, $tn, $msg);
         }
         catch(PushBulletException $e) {
