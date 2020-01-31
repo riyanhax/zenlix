@@ -759,7 +759,8 @@ function send_pushbullet($type_op, $lang, $user_mail, $ticket_id) {
         }
     } 
     else if ($type_op == "ticket_comment") {
-        $tn = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_comment . ")";
+        $theme = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_msg_comment . ")";
+
         $msg = lang($lang, 'MAIL_subj') . ": " . $s . "\r\n";
         $msg.= lang($lang, 'MAIL_created') . ": " . $uin . "\r\n";
         $msg.= lang($lang, 'MAIL_to') . ": " . $to_text . "\r\n";
@@ -772,12 +773,12 @@ function send_pushbullet($type_op, $lang, $user_mail, $ticket_id) {
             //email, title, msg
             $args = [
                 $user_mail,
-                $tn,
+                $theme,
                 $msg
             ];
 
             funkit_setlog('ticket:comment -> passed args', $args);
-            $response = $p->pushNote($user_mail, $tn, $msg);
+            $response = $p->pushNote($user_mail, $theme, $msg);
         }
         catch(PushBulletException $e) {
             $response = $e->getMessage();
@@ -2232,19 +2233,17 @@ foreach ($res1 as $qrow) {
         $stmt->execute(array(
             ':tid' => $val
         ));
-        $usr_info = $stmt->fetch(PDO::FETCH_ASSOC);
-        $pb = $usr_info['pb'];
-        $usr_mail = strtolower($usr_info['email']);
-        $usr_lang = $usr_info['lang'];
-        $mob = $usr_info['mob'];
+        $usr_info   = $stmt->fetch(PDO::FETCH_ASSOC);
+        $pushbullet = $usr_info['pb'];
+        $usr_mail   = strtolower($usr_info['email']);
+        $usr_lang   = $usr_info['lang'];
+        $mob        = $usr_info['mob'];
         
         $usr_id = $usr_info['id'];
-        
-        // $lb=$fio['lock_by'];
-        
+
         if (get_conf_param('pb_active') == "true") {
-            if ($pb) {
-                send_pushbullet($type_op, $usr_lang, $pb, $ticket_id);
+            if ($pushbullet) {
+                send_pushbullet($type_op, $usr_lang, $usr_mail, $ticket_id);
             }
         }
         if (get_conf_param('mail_active') == "true") {
