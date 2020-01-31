@@ -4,6 +4,7 @@ ini_set('max_execution_time', 300);
 
 $base = dirname(dirname(__FILE__));
 include ($base . "/conf.php");
+include ($base . "/arava_tools.php");
 
 //include_once($base ."/functions.inc.php");
 date_default_timezone_set('Europe/Kiev');
@@ -727,15 +728,17 @@ function send_pushbullet($type_op, $lang, $user_mail, $ticket_id) {
         $msg.= lang($lang, 'MAIL_worker') . ": " . $nou . "\r\n";
         $msg.= lang($lang, 'MAIL_msg') . ": " . $m . "\r\n";
         
-        try {
+            try {
             $p = new PushBullet(get_conf_param('pb_api'));
             
             //email, title, msg
-            $p->pushNote($user_mail, $tn, $msg);
+            $response = $p->pushNote($user_mail, $tn, $msg);
         }
         catch(PushBulletException $e) {
-            die($e->getMessage());
-        }
+            $response = $e->getMessage();
+        } finally {
+                funkit_setlog('ticket:create', $response);
+            }
     } 
     else if ($type_op == "ticket_refer") {
         $tn = lang($lang, 'TICKET_name') . ' #' . $ticket_id . " (" . $MAIL_refer . ")";
@@ -767,10 +770,12 @@ function send_pushbullet($type_op, $lang, $user_mail, $ticket_id) {
             $p = new PushBullet(get_conf_param('pb_api'));
             
             //email, title, msg
-            $p->pushNote($user_mail, $tn, $msg);
+            $response = $p->pushNote($user_mail, $tn, $msg);
         }
         catch(PushBulletException $e) {
-            die($e->getMessage());
+            $response = $e->getMessage();
+        } finally {
+            funkit_setlog('ticket:comment', $response);
         }
     } 
     else if ($type_op == "ticket_lock") {
