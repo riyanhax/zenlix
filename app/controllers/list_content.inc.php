@@ -217,8 +217,6 @@ if (isset($_POST['menu'])) {
                     ));
             }
         } else if ($ps == "0" && $noRules === false) {
-
-            funkit_setlog('rules = 0', 'debug');
 //            $p = get_users_from_units_by_user();
 //
 //            foreach ($p as $key => $value) {
@@ -231,6 +229,7 @@ if (isset($_POST['menu'])) {
 //            }
 
             $collegues = implode(',', $collegues);
+            funkit_setlog('collegues', $collegues);
             
             if (isset($_SESSION['hd.rustem_sort_out'])) {
                 if ($_SESSION['hd.rustem_sort_out'] == "ok") {
@@ -281,8 +280,6 @@ if (isset($_POST['menu'])) {
                     ]);
                 }
             } elseif (!isset($_SESSION['hd.rustem_sort_out'])) {
-                funkit_setlog($collegues);
-
                 $stmt = $dbConnection->prepare(
                     "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name  
                     WHERE user_init_id IN ($collegues) AND arch=:arch AND s.id IN ($types) AND status = :status
@@ -356,7 +353,6 @@ if (isset($_POST['menu'])) {
              */
             else if (!isset($_SESSION['hd.rustem_sort_out'])) {
                 $collegues = array_push($collegues, $user['uid']);
-                funkit_setlog('debug', $collegues);
 
 //                $stmt = $dbConnection->prepare(
 //                    "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
