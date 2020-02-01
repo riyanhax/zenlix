@@ -6,6 +6,9 @@
  * Time: 16:50
  */
 $base = dirname(dirname(__FILE__));
+
+print $base;
+
 include ($base . "/arava_tools.php");
 
 class EventsReport
