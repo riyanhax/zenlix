@@ -95,18 +95,18 @@ if (isset($_POST['menu'])) {
         $order_l = $order_l . " " . $order_l_var;
 
         $noRules = false; // with no checking user rules
+
         if ($_SESSION['hd.rustem_sort_out'] === 'activity_24_hours') {
             try {
                 $noRules = true;
                 $stmt = $dbConnection->prepare(
                     "SELECT ticket_id FROM ticket_log WHERE id IN (
-                            SELECT MAX(id) FROM ticket_log
-                            WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW() /*AND `msg` = 'create' AND `init_user_id` IN (:init_users)*/)
-                          GROUP BY ticket_id)"
+                    SELECT MAX(id) FROM ticket_log
+                    WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW())
+                    GROUP BY ticket_id)"
                 );
-                //$stmt->execute([':init_users' => implode(',', $collegues)]);
                 $stmt->execute();
-                $idts = $stmt->fetchAll(PDO::FETCH_ASSOC); // get tickets ids with activity of last 24 hours
+                $idts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 funkit_setlog('idts', $idts);
 
@@ -114,16 +114,13 @@ if (isset($_POST['menu'])) {
 
                 if ($idts) {
                     $idts  = implode(',', $idts);
-
-                    $units = $_SESSION['helpdesk_user_unit']; // 10 or 10,11
-
                     $stmt  = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
                         WHERE t.id IN ($idts) AND s.id IN ($types) AND user_to_id = :uid AND (user_to_id IS NOT NULL OR t.unit_id IN (:unit)) AND status <> 3"
                     );
                     $stmt->execute(
                         [
-                            ':uid' => $uid,
+                            ':uid'  => $uid,
                             ':unit' => $user['user']['unit'],
                         ]
                     );
@@ -528,11 +525,10 @@ if (isset($_POST['menu'])) {
             ob_end_clean();
             
             array_push($ar_res, array(
-                
                 'id' => $row['id'],
                 'style' => $style,
                 'prio' => $prio,
-                'muclass' => $muclass,
+                //'muclass' => $muclass,
                 'subj' => make_html($row['subj'], 'no') ,
 				'sabj_pl' => $row['sabj_pl'],
 				'comment' => getLastComment($row['id']),
