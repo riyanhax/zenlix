@@ -436,7 +436,7 @@ class UserHelper
 
                 if ($user) {
                     $stmt = $this->dbConnection->prepare(
-                        'SELECT id as uid, unit FROM users WHERE unit IN (:unit) AND id <> :uid'
+                        'SELECT id as uid, unit FROM users WHERE unit IN (:unit)'
                     );
 
                     $stmt->execute([
