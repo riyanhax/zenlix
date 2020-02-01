@@ -23,10 +23,13 @@ if (isset($_POST['menu'])) {
 
     if ($_POST['menu'] == 'out') {
         $UserHelper = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
+
         $user = $UserHelper->getUserData('department:extended');
 
-        $page    = ($_POST['page']);
-        $perpage = '10';
+        $collegues = f3pick($user, 'uid');
+
+        $page      = ($_POST['page']);
+        $perpage   = '10';
 
         if (isset($_SESSION['hd.rustem_list_out'])) {
             $perpage = $_SESSION['hd.rustem_list_out'];
@@ -93,18 +96,17 @@ if (isset($_POST['menu'])) {
         $noRules = false; // with no checking user rules
         if ($_SESSION['hd.rustem_sort_out'] === 'activity_24_hours') {
             try {
-                $collegues = f3pick($user, 'uid');
-
                 $noRules = true;
                 $stmt = $dbConnection->prepare(
                     "SELECT ticket_id FROM ticket_log WHERE id IN
                           (
                             SELECT MAX(id) FROM ticket_log 
-                            WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW() AND `msg` = 'create' AND `init_user_id` IN (:init_users)
+                            WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW() /*AND `msg` = 'create' AND `init_user_id` IN (:init_users)*/
                           )
                           GROUP BY ticket_id)"
                 );
-                $stmt->execute([':init_users' => implode(',', $collegues)]);
+                //$stmt->execute([':init_users' => implode(',', $collegues)]);
+                $stmt->execute();
                 $idts = $stmt->fetchAll(); // get tickets ids with activity of last 24 hours
 
                 $idts = f3pick($idts,'ticket_id'); // get array with tickets numbers
@@ -161,8 +163,7 @@ if (isset($_POST['menu'])) {
                         ':start_pos' => $start_pos,
                         ':perpage' => $perpage
                     ));
-                } 
-                else if ($_SESSION['hd.rustem_sort_out'] == "free") {
+                } else if ($_SESSION['hd.rustem_sort_out'] == "free") {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
                                   WHERE arch=:n AND lock_by=:lb AND status=:s AND s.id IN ($types)
@@ -174,8 +175,7 @@ if (isset($_POST['menu'])) {
                         ':start_pos' => $start_pos,
                         ':perpage' => $perpage
                     ));
-                } 
-                else if ($_SESSION['hd.rustem_sort_out'] == "ilock") {
+                } else if ($_SESSION['hd.rustem_sort_out'] == "ilock") {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
                                   WHERE arch=:n AND lock_by=:lb AND s.id IN ($types) AND status = :status
@@ -187,8 +187,7 @@ if (isset($_POST['menu'])) {
                         ':start_pos' => $start_pos,
                         ':perpage'   => $perpage
                     ));
-                } 
-                else if ($_SESSION['hd.rustem_sort_out'] == "lock") {
+                } else if ($_SESSION['hd.rustem_sort_out'] == "lock") {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
                                   WHERE arch=:n AND (lock_by<>:lb and lock_by<>0) AND (status=0) AND s.id IN ($types) 
