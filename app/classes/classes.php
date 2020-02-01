@@ -433,6 +433,7 @@ class UserHelper
                 $stmt->execute([':uid' => $this->uid]);
 
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                funkit_setlog('user', $user);
 
                 if ($user) {
                     $stmt = $this->dbConnection->prepare(
