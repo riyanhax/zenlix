@@ -432,9 +432,9 @@ class UserHelper
                 );
                 $stmt->execute([':uid' => $this->uid]);
 
-                $user = $stmt->fetchAll();
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                funkit_setlog('user', $this->uid);
+                funkit_setlog('user', $user);
 
 //                $stmt = $this->dbConnection->prepare(
 //                    'SELECT id, unit FROM users WHERE unit IN ()'
