@@ -22,9 +22,8 @@ if (isset($_POST['menu'])) {
     $types = implode(',',$types);
 
     if ($_POST['menu'] == 'out') {
-        $User = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
-        $User->getUserData('department:extended');
-
+        $UserHelper = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
+        $user = $UserHelper->getUserData('department:extended');
 
         $page    = ($_POST['page']);
         $perpage = '10';
@@ -94,18 +93,18 @@ if (isset($_POST['menu'])) {
         $noRules = false; // with no checking user rules
         if ($_SESSION['hd.rustem_sort_out'] === 'activity_24_hours') {
             try {
+                $collegues = f3pick($user, 'uid');
+
                 $noRules = true;
                 $stmt = $dbConnection->prepare(
-                    "
-                          SELECT ticket_id FROM ticket_log
-                          WHERE id IN
+                    "SELECT ticket_id FROM ticket_log WHERE id IN
                           (
                             SELECT MAX(id) FROM ticket_log 
-                            WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW() AND `msg` = 'create' AND `init_user_id` = $uid
+                            WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW() AND `msg` = 'create' AND `init_user_id` IN (:init_users)
                           )
                           GROUP BY ticket_id)"
                 );
-                $stmt->execute();
+                $stmt->execute([':init_users' => implode(',', $collegues)]);
                 $idts = $stmt->fetchAll(); // get tickets ids with activity of last 24 hours
 
                 $idts = f3pick($idts,'ticket_id'); // get array with tickets numbers

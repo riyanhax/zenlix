@@ -450,8 +450,6 @@ class UserHelper
                         'user'      => $user,
                         'collegues' => $colleagues,
                     ];
-
-                    funkit_setlog('response', $response);
                 }
 
                 return $response ?? [];
