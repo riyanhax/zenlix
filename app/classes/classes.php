@@ -429,13 +429,20 @@ class UserHelper
             case 'department:extended':
                 $stmt = $this->dbConnection->prepare(
                     'SELECT id, unit FROM users WHERE id = :uid'
-                )->execute([':uid' => $this->uid]);
+                );
+                $stmt->execute([':uid' => $this->uid]);
 
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    //                $stmt = $this->dbConnection->prepare(
-    //                    'SELECT id, unit FROM users WHERE unit IN ()'
-    //                );
+                $stmt = $this->dbConnection->prepare(
+                    'SELECT id, unit FROM users WHERE unit IN (:unit)'
+                );
+
+                $stmt->execute(['unit' => $user['unit']]);
+
+                $colleagues = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                funkit_setlog($colleagues);
                 break;
         }
     }
