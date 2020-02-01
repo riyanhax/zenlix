@@ -437,10 +437,13 @@ class UserHelper
 
                 if ($user) {
                     $stmt = $this->dbConnection->prepare(
-                        'SELECT id, unit FROM users WHERE unit IN (:unit)'
+                        'SELECT id, unit FROM users WHERE unit IN (:unit) AND id <> :uid'
                     );
 
-                    $stmt->execute(['unit' => $user['unit']]);
+                    $stmt->execute([
+                        'uid'  => $user['uid'],
+                        'unit' => $user['unit']
+                    ]);
 
                     $colleagues = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
