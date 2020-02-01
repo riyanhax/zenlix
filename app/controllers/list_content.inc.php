@@ -27,6 +27,7 @@ if (isset($_POST['menu'])) {
         $user = $UserHelper->getUserData('department:extended');
 
         $collegues = f3pick($user, 'uid');
+        funkit_setlog('arava', $collegues);
 
         $page      = ($_POST['page']);
         $perpage   = '10';
@@ -282,7 +283,7 @@ if (isset($_POST['menu'])) {
                 }
             } elseif (!isset($_SESSION['hd.rustem_sort_out'])) {
                 funkit_setlog($collegues);
-                
+
                 $stmt = $dbConnection->prepare(
                     "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name  
                     WHERE user_init_id IN ($collegues) AND arch=:arch AND s.id IN ($types) AND status = :status
