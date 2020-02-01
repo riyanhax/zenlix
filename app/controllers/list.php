@@ -88,13 +88,12 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
     else if (isset($_GET['out'])) {
         $status_out = "active";
         $priv_val = priv_status($_SESSION['helpdesk_user_id']);
+
         if ($priv_val == "0") {
             $text = get_unit_name_return(unit_of_user($_SESSION['helpdesk_user_id']));
-        } 
-        else if ($priv_val == "1") {
+        } else if ($priv_val == "1") {
             $text = get_unit_name_return(unit_of_user($_SESSION['helpdesk_user_id']));
-        } 
-        else if ($priv_val == "2") {
+        } else if ($priv_val == "2") {
             $text = $CONF['name_of_firm'];
         }
         
@@ -147,9 +146,11 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                 case 'lock':
                     $button_sort_out['lock'] = "active";
                     break;
+
                 case 'personal':
                     $button_sort_out['personal'] = 'active';
                     break;
+
                 default:
                     $button_sort_out['main'] = "active";
             }
