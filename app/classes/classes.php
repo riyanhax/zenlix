@@ -443,6 +443,7 @@ class UserHelper
 
                     $colleagues = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+                    funkit_setlog('user', $user);
                     funkit_setlog('colleagues', $colleagues);
                 }
 
