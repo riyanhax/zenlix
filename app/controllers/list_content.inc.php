@@ -116,12 +116,12 @@ if (isset($_POST['menu'])) {
                     $idts  = implode(',', $idts);
                     $stmt  = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
-                        WHERE t.id IN ($idts)/* AND s.id IN ($types)*/ AND user_to_id = :uid /*AND (user_to_id IS NOT NULL OR t.unit_id IN (:unit))*/ AND status <> 3"
+                        WHERE t.id IN ($idts) AND s.id IN ($types) AND user_to_id = :uid /*AND (user_to_id IS NOT NULL OR t.unit_id IN (:unit))*/ AND status <> 3"
                     );
                     $stmt->execute(
                         [
                             ':uid'  => $uid,
-                            ':unit' => $user['user']['unit'],
+                            //':unit' => $user['user']['unit'],
                         ]
                     );
                 }
