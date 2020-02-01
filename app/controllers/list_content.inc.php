@@ -19,7 +19,7 @@ if (isset($_POST['menu'])) {
         unset($types[array_search(19,$types)]);
     }
 
-    $types = implode(',',$types);
+    $types = implode(',', $types);
 
     if ($_POST['menu'] == 'out') {
         $UserHelper = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
@@ -359,18 +359,19 @@ if (isset($_POST['menu'])) {
              */
             else if (!isset($_SESSION['hd.rustem_sort_out'])) {
                 $collegues = array_push($collegues, $user['uid']);
+                funkit_setlog('debug', $collegues);
 
-                $stmt = $dbConnection->prepare(
-                    "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
-                              WHERE user_init_id IN (:init_users) AND arch=:n AND s.id IN ($types) AND status <> 3
-                              ORDER BY $order_l 
-                              LIMIT :start_pos, :perpage");
-                $stmt->execute(array(
-                    ':init_users' => implode(',', $collegues),
-                    ':n'          => '0',
-                    ':start_pos'  => $start_pos,
-                    ':perpage'    => $perpage
-                ));
+//                $stmt = $dbConnection->prepare(
+//                    "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+//                              WHERE user_init_id IN (:init_users) AND arch=:n AND s.id IN ($types) AND status <> 3
+//                              ORDER BY $order_l
+//                              LIMIT :start_pos, :perpage");
+//                $stmt->execute(array(
+//                    ':init_users' => implode(',', $collegues),
+//                    ':n'          => '0',
+//                    ':start_pos'  => $start_pos,
+//                    ':perpage'    => $perpage
+//                ));
             }
         }
         
