@@ -434,15 +434,18 @@ class UserHelper
 
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                $stmt = $this->dbConnection->prepare(
-                    'SELECT id, unit FROM users WHERE unit IN (:unit)'
-                );
+                if ($user) {
+                    $stmt = $this->dbConnection->prepare(
+                        'SELECT id, unit FROM users WHERE unit IN (:unit)'
+                    );
 
-                $stmt->execute(['unit' => $user['unit']]);
+                    $stmt->execute(['unit' => $user['unit']]);
 
-                $colleagues = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $colleagues = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                funkit_setlog($colleagues);
+                    funkit_setlog('colleagues', $colleagues);
+                }
+
                 break;
         }
     }
