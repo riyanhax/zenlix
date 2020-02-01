@@ -441,7 +441,7 @@ class UserHelper
 
                     $stmt->execute(['unit' => $user['unit']]);
 
-                    $colleagues = $stmt->fetch(PDO::FETCH_ASSOC);
+                    $colleagues = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     funkit_setlog('colleagues', $colleagues);
                 }
