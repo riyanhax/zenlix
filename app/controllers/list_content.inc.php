@@ -27,6 +27,7 @@ if (isset($_POST['menu'])) {
         $user = $UserHelper->getUserData('department:extended');
 
         $collegues = f3pick($user['collegues'], 'uid');
+        $collegues = implode(',', $collegues);
 
         $page      = ($_POST['page']);
         $perpage   = '10';
@@ -98,34 +99,32 @@ if (isset($_POST['menu'])) {
             try {
                 $noRules = true;
                 $stmt = $dbConnection->prepare(
-                    "SELECT ticket_id FROM ticket_log WHERE id IN
-                          (
-                            SELECT MAX(id) FROM ticket_log 
-                            WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW() /*AND `msg` = 'create' AND `init_user_id` IN (:init_users)*/
-                          )
+                    "SELECT ticket_id FROM ticket_log WHERE id IN (
+                            SELECT MAX(id) FROM ticket_log
+                            WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW() /*AND `msg` = 'create' AND `init_user_id` IN (:init_users)*/)
                           GROUP BY ticket_id)"
                 );
                 //$stmt->execute([':init_users' => implode(',', $collegues)]);
                 $stmt->execute();
-                $idts = $stmt->fetchAll(); // get tickets ids with activity of last 24 hours
+                $idts = $stmt->fetchAll(PDO::FETCH_ASSOC); // get tickets ids with activity of last 24 hours
 
-                $idts = f3pick($idts,'ticket_id'); // get array with tickets numbers
+                $idts = f3pick($idts,'ticket_id');
 
-                foreach ($idts as $id) {
-                    if ($id) {
-                        $nIdts[] = $id;
-                    }
-                }
+                if ($idts) {
+                    $idts  = implode(',', $idts);
 
-                if (isset($nIdts)) {
-                    $idts  = implode(',', $nIdts);
                     $units = $_SESSION['helpdesk_user_unit']; // 10 or 10,11
 
                     $stmt  = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
-                                    WHERE t.id IN ($idts) AND s.id IN ($types) AND user_to_id = :uid AND (user_to_id IS NOT NULL OR t.unit_id IN ($units)) AND status <> 3"
+                        WHERE t.id IN ($idts) AND s.id IN ($types) AND user_to_id = :uid AND (user_to_id IS NOT NULL OR t.unit_id IN (:unit)) AND status <> 3"
                     );
-                    $stmt->execute([':uid' => $uid]);
+                    $stmt->execute(
+                        [
+                            ':uid' => $uid,
+                            'unit' => $user['user']['unit'],
+                        ]
+                    );
                 }
 
             } catch (Exception $e) {
@@ -217,8 +216,6 @@ if (isset($_POST['menu'])) {
                     ));
             }
         } else if ($ps == "0" && $noRules === false) {
-            $collegues = implode(',', $collegues);
-            
             if (isset($_SESSION['hd.rustem_sort_out'])) {
                 if ($_SESSION['hd.rustem_sort_out'] == "ok") {
                     $stmt = $dbConnection->prepare(
@@ -281,7 +278,6 @@ if (isset($_POST['menu'])) {
                 ]);
             }
         } else if ($ps == "1" && $noRules === false) {
-            
             if (isset($_SESSION['hd.rustem_sort_out'])) {
                 if ($_SESSION['hd.rustem_sort_out'] == "ok") {
                     $stmt = $dbConnection->prepare(
