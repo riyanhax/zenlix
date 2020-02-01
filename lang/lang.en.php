@@ -994,7 +994,7 @@ function lang_en($phrase){
         'NAVBAR_deps'=>'Clients group',
         'with_long_term' => 'With long term',
         'without_long_term' => 'With out long term',
-        'tasks_24_hours' => '24 hours tasks',
+        'tasks_24_hours' => '24 hour tasks',
  );
     return isset($lang[$phrase]) ? $lang[$phrase] : 'undefined';
 }
