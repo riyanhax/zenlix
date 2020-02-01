@@ -26,7 +26,7 @@ if (isset($_POST['menu'])) {
 
         $user = $UserHelper->getUserData('department:extended');
 
-        $collegues = f3pick($user, 'uid');
+        $collegues = f3pick($user['collegues'], 'uid');
         funkit_setlog('arava', $collegues);
 
         $page      = ($_POST['page']);
