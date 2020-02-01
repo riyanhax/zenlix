@@ -358,16 +358,18 @@ if (isset($_POST['menu'])) {
              * status 3 == canceled tickets
              */
             else if (!isset($_SESSION['hd.rustem_sort_out'])) {
+                $collegues = array_push($collegues, $user['uid']);
+
                 $stmt = $dbConnection->prepare(
                     "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
-                              WHERE user_init_id=:user_id AND arch=:n AND s.id IN ($types) AND status <> 3
+                              WHERE user_init_id IN (:init_users) AND arch=:n AND s.id IN ($types) AND status <> 3
                               ORDER BY $order_l 
                               LIMIT :start_pos, :perpage");
                 $stmt->execute(array(
-                    ':user_id' => $uid,
-                    ':n' => '0',
-                    ':start_pos' => $start_pos,
-                    ':perpage' => $perpage
+                    ':init_users' => implode(',', $collegues),
+                    ':n'          => '0',
+                    ':start_pos'  => $start_pos,
+                    ':perpage'    => $perpage
                 ));
             }
         }
