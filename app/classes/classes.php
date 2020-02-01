@@ -7,8 +7,6 @@
  */
 $base = dirname(dirname(dirname(__FILE__)));
 
-print $base;
-
 include ($base . "/arava_tools.php");
 
 class EventsReport
