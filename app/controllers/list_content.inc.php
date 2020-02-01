@@ -9,7 +9,7 @@ if ($CONF_HD['debug_mode'] == true) {
 
 if (isset($_POST['menu'])) {
     /* get ticket`s types */
-    $stmt = $dbConnection->prepare('SELECT id,name FROM subj');
+    $stmt = $dbConnection->prepare('SELECT id, name FROM subj');
     $stmt->execute();
     $ticketTypes = $stmt->fetchAll();
 
@@ -116,7 +116,7 @@ if (isset($_POST['menu'])) {
                     $idts  = implode(',', $idts);
                     $stmt  = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
-                        WHERE t.id IN ($idts) AND s.id IN ($types) AND user_to_id = :uid /*AND (user_to_id IS NOT NULL OR t.unit_id IN (:unit))*/ AND status <> 3"
+                        WHERE t.id IN ($idts)/* AND s.id IN ($types)*/ AND user_to_id = :uid /*AND (user_to_id IS NOT NULL OR t.unit_id IN (:unit))*/ AND status <> 3"
                     );
                     $stmt->execute(
                         [
