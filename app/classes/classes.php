@@ -416,7 +416,8 @@ class UserHelper
             case 'department':
                 $stmt = $this->dbConnection->prepare(
                     'SELECT id, fio, status, priv, unit FROM users WHERE id = :uid'
-                )->execute([':uid' => $this->uid]);
+                );
+                $stmt->execute([':uid' => $this->uid]);
 
                 $data = $stmt->fetchAll();
 
@@ -424,7 +425,8 @@ class UserHelper
             case 'department:extended':
                 $stmt = $this->dbConnection->prepare(
                     'SELECT id, unit FROM users WHERE id = :uid'
-                )->execute([':uid' => $this->uid]);
+                );
+                $stmt->execute([':uid' => $this->uid]);
 
                 $user = $stmt->fetchAll();
 
