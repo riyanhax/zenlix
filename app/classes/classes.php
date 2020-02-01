@@ -414,7 +414,7 @@ class UserHelper
         $this->dbConnection = $dbConnection;
     }
 
-    public function getUserData(string $dataType)
+    public function getUserData(string $dataType) : array
     {
         switch ($dataType) {
             case 'department':
@@ -428,16 +428,15 @@ class UserHelper
                 break;
             case 'department:extended':
                 $stmt = $this->dbConnection->prepare(
-                    'SELECT id, unit FROM users WHERE id = :uid'
+                    'SELECT id as uid, unit FROM users WHERE id = :uid'
                 );
                 $stmt->execute([':uid' => $this->uid]);
 
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                funkit_setlog('user', $user);
 
                 if ($user) {
                     $stmt = $this->dbConnection->prepare(
-                        'SELECT id, unit FROM users WHERE unit IN (:unit) AND id <> :uid'
+                        'SELECT id as uid, unit FROM users WHERE unit IN (:unit) AND id <> :uid'
                     );
 
                     $stmt->execute([
@@ -447,10 +446,17 @@ class UserHelper
 
                     $colleagues = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    funkit_setlog('colleagues', $colleagues);
+                    $response = [
+                        'user'      => $user,
+                        'collegues' => $colleagues,
+                    ];
+
+                    funkit_setlog('response', $response);
                 }
 
-                break;
+                return $response ?? [];
         }
+
+        return [];
     }
 }
