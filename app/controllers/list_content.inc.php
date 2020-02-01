@@ -217,19 +217,7 @@ if (isset($_POST['menu'])) {
                     ));
             }
         } else if ($ps == "0" && $noRules === false) {
-//            $p = get_users_from_units_by_user();
-//
-//            foreach ($p as $key => $value) {
-//                $in_query = $in_query . ' :val_' . $key . ', ';
-//            }
-//
-//            $in_query = substr($in_query, 0, -2);
-//            foreach ($p as $key => $value) {
-//                $vv[":val_" . $key] = $value;
-//            }
-
             $collegues = implode(',', $collegues);
-            funkit_setlog('collegues', $collegues);
             
             if (isset($_SESSION['hd.rustem_sort_out'])) {
                 if ($_SESSION['hd.rustem_sort_out'] == "ok") {
@@ -250,9 +238,9 @@ if (isset($_POST['menu'])) {
                                   WHERE user_init_id IN ($collegues) AND arch=:arch AND lock_by=:lock AND status=:status AND s.id IN ($types)
                                   LIMIT :start_pos, :perpage");
                     $stmt->execute([
+                        ':arch'      => '0',
                         ':lock'      => '0',
                         ':status'    => '0',
-                        ':arch'      => '0',
                         ':start_pos' => $start_pos,
                         ':perpage'   => $perpage
                     ]);
@@ -262,6 +250,7 @@ if (isset($_POST['menu'])) {
                                   WHERE user_init_id IN ($collegues) AND arch=:arch AND lock_by=:lock AND s.id IN ($types) AND status = :status
                                   LIMIT :start_pos, :perpage");
                     $stmt->execute([
+                        ':arch'      => '0',
                         ':lock'      => $uid,
                         ':status'    => 0,
                         ':start_pos' => $start_pos,
@@ -270,11 +259,11 @@ if (isset($_POST['menu'])) {
                 } else if ($_SESSION['hd.rustem_sort_out'] == "lock") {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
-                                  WHERE user_init_id IN ($collegues) AND arch=:n AND (lock_by<>:lock AND lock_by<>0) AND (status=0) AND s.id IN ($types) 
+                                  WHERE user_init_id IN ($collegues) AND arch=:arch AND (lock_by<>:lock AND lock_by<>0) AND (status=0) AND s.id IN ($types) 
                                   LIMIT :start_pos, :perpage");
                     $stmt->execute([
-                        ':lock'      => $uid,
                         ':arch'      => '0',
+                        ':lock'      => $uid,
                         ':start_pos' => $start_pos,
                         ':perpage'   => $perpage
                     ]);
