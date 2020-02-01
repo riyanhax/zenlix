@@ -122,7 +122,7 @@ if (isset($_POST['menu'])) {
                     $stmt->execute(
                         [
                             ':uid' => $uid,
-                            'unit' => $user['user']['unit'],
+                            ':unit' => $user['user']['unit'],
                         ]
                     );
                 }
