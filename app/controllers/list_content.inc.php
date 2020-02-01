@@ -217,85 +217,80 @@ if (isset($_POST['menu'])) {
                     ));
             }
         } else if ($ps == "0" && $noRules === false) {
-            $p = get_users_from_units_by_user();
 
-            foreach ($p as $key => $value) {
-                $in_query = $in_query . ' :val_' . $key . ', ';
-            }
-            
-            $in_query = substr($in_query, 0, -2);
-            foreach ($p as $key => $value) {
-                $vv[":val_" . $key] = $value;
-            }
+            funkit_setlog('rules = 0', 'debug');
+//            $p = get_users_from_units_by_user();
+//
+//            foreach ($p as $key => $value) {
+//                $in_query = $in_query . ' :val_' . $key . ', ';
+//            }
+//
+//            $in_query = substr($in_query, 0, -2);
+//            foreach ($p as $key => $value) {
+//                $vv[":val_" . $key] = $value;
+//            }
+
+            $collegues = implode(',', $collegues);
             
             if (isset($_SESSION['hd.rustem_sort_out'])) {
                 if ($_SESSION['hd.rustem_sort_out'] == "ok") {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
-                                   WHERE user_init_id IN ($in_query) AND arch=:n AND status=:s AND s.id IN ($types)
-                                   LIMIT :start_pos, :perpage");
-                    $paramss = array(
-                        ':s' => '1',
-                        ':n' => '0',
-                        ':start_pos' => $start_pos,
-                        ':perpage' => $perpage
+                         WHERE user_init_id IN ($collegues) AND arch=:arch AND status=:status AND s.id IN ($types)
+                         LIMIT :start_pos, :perpage"
                     );
-                    $stmt->execute(array_merge($vv, $paramss));
-                } 
-                else if ($_SESSION['hd.rustem_sort_out'] == "free") {
+                    $stmt->execute([
+                        ':status'    => '1',
+                        ':arch'      => '0',
+                        ':start_pos' => $start_pos,
+                        ':perpage'   => $perpage
+                    ]);
+                } else if ($_SESSION['hd.rustem_sort_out'] == "free") {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
-                                  WHERE user_init_id IN ($in_query) AND arch=:n AND lock_by=:lb AND status=:s AND s.id IN ($types)
+                                  WHERE user_init_id IN ($collegues) AND arch=:arch AND lock_by=:lock AND status=:status AND s.id IN ($types)
                                   LIMIT :start_pos, :perpage");
-                    $paramss = array(
-                        ':lb' => '0',
-                        ':s' => '0',
-                        ':n' => '0',
+                    $stmt->execute([
+                        ':lock'      => '0',
+                        ':status'    => '0',
+                        ':arch'      => '0',
                         ':start_pos' => $start_pos,
-                        ':perpage' => $perpage
-                    );
-                    $stmt->execute(array_merge($vv, $paramss));
-                } 
-                else if ($_SESSION['hd.rustem_sort_out'] == "ilock") {
+                        ':perpage'   => $perpage
+                    ]);
+                } else if ($_SESSION['hd.rustem_sort_out'] == "ilock") {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
-                                  WHERE user_init_id IN ($in_query) AND arch=:n AND lock_by=:lb AND s.id IN ($types) AND status = :status
+                                  WHERE user_init_id IN ($collegues) AND arch=:arch AND lock_by=:lock AND s.id IN ($types) AND status = :status
                                   LIMIT :start_pos, :perpage");
-                    $paramss = array(
-                        ':lb'        => $uid,
-                        ':n'         => '0',
+                    $stmt->execute([
+                        ':lock'      => $uid,
                         ':status'    => 0,
                         ':start_pos' => $start_pos,
                         ':perpage'   => $perpage
-                    );
-                    $stmt->execute(array_merge($vv, $paramss));
-                } 
-                else if ($_SESSION['hd.rustem_sort_out'] == "lock") {
+                    ]);
+                } else if ($_SESSION['hd.rustem_sort_out'] == "lock") {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
-                                  WHERE user_init_id IN ($in_query) AND arch=:n AND (lock_by<>:lb AND lock_by<>0) AND (status=0) AND s.id IN ($types) 
+                                  WHERE user_init_id IN ($collegues) AND arch=:n AND (lock_by<>:lock AND lock_by<>0) AND (status=0) AND s.id IN ($types) 
                                   LIMIT :start_pos, :perpage");
-                    $paramss = array(
-                        ':lb' => $uid,
-                        ':n' => '0',
+                    $stmt->execute([
+                        ':lock'      => $uid,
+                        ':arch'      => '0',
                         ':start_pos' => $start_pos,
-                        ':perpage' => $perpage
-                    );
-                    $stmt->execute(array_merge($vv, $paramss));
+                        ':perpage'   => $perpage
+                    ]);
                 }
-            }
-            else if (!isset($_SESSION['hd.rustem_sort_out'])) {
+            } elseif (!isset($_SESSION['hd.rustem_sort_out'])) {
                 $stmt = $dbConnection->prepare(
                     "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name  
-                    WHERE user_init_id IN ($in_query) AND arch=:n AND s.id IN ($types) AND status = :status
+                    WHERE user_init_id IN ($collegues) AND arch=:arch AND s.id IN ($types) AND status = :status
                     ORDER BY $order_l LIMIT :start_pos, :perpage");
-                $paramss = array(
-                    ':n'         => '0',
+                $stmt->execute([
+                    ':arch'      => '0',
                     ':status'    => 0,
                     ':start_pos' => $start_pos,
                     ':perpage'   => $perpage
-                );
-                $stmt->execute(array_merge($vv, $paramss));
+                ]);
             }
         } else if ($ps == "1" && $noRules === false) {
             
