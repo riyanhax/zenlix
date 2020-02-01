@@ -398,3 +398,42 @@ class EventsReport
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
+
+class UserHelper
+{
+    protected $uid;
+    protected $dbConnection;
+
+    public function __construct(int $uid, $dbConnection = [])
+    {
+        $this->uid = $uid;
+        $this->dbConnection = $dbConnection;
+    }
+
+    public function getUserData(string $dataType)
+    {
+        switch ($dataType) {
+            case 'department':
+                $stmt = $this->dbConnection->prepare(
+                    'SELECT id, fio, status, priv, unit FROM users WHERE id = :uid'
+                )->execute([':uid' => $this->uid]);
+
+                $data = $stmt->fetchAll();
+
+                break;
+            case 'department:extended':
+                $stmt = $this->dbConnection->prepare(
+                    'SELECT id, unit FROM users WHERE id = :uid'
+                )->execute([':uid' => $this->uid]);
+
+                $user = $stmt->fetchAll();
+
+                funkit_setlog($user);
+
+//                $stmt = $this->dbConnection->prepare(
+//                    'SELECT id, unit FROM users WHERE unit IN ()'
+//                )
+                break;
+        }
+    }
+}
