@@ -5,6 +5,9 @@
  * Date: 06.03.19
  * Time: 16:50
  */
+$base = dirname(dirname(__FILE__));
+include ($base . "/arava_tools.php");
+
 class EventsReport
 {
     protected $events =
