@@ -5,7 +5,7 @@
  * Date: 06.03.19
  * Time: 16:50
  */
-$base = dirname(dirname(__FILE__)) . '../';
+$base = dirname(__FILE__);
 
 print $base;
 
