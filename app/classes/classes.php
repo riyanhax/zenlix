@@ -434,7 +434,7 @@ class UserHelper
 
                 $user = $stmt->fetchAll();
 
-                funkit_setlog($user);
+                funkit_setlog('user', $user);
 
 //                $stmt = $this->dbConnection->prepare(
 //                    'SELECT id, unit FROM users WHERE unit IN ()'
