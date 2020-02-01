@@ -108,6 +108,8 @@ if (isset($_POST['menu'])) {
                 $stmt->execute();
                 $idts = $stmt->fetchAll(PDO::FETCH_ASSOC); // get tickets ids with activity of last 24 hours
 
+                funkit_setlog('idts', $idts);
+
                 $idts = f3pick($idts,'ticket_id');
 
                 if ($idts) {
@@ -128,7 +130,7 @@ if (isset($_POST['menu'])) {
                 }
 
             } catch (Exception $e) {
-                echo $e->getMessage();
+                funkit_setlog(date("D M j G:i:s T Y"), "list?out: activity_24_hours " . $e->getMessage());
             }
         }
 
@@ -356,6 +358,7 @@ if (isset($_POST['menu'])) {
         //or id in (LIST TICKET_ID)
         
         $res1 = $stmt->fetchAll();
+        funkit_setlog('res1', $res1);
         
         $aha = get_total_pages('out', $uid);
         if (isset($noRules) && $noRules === true) {
