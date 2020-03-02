@@ -955,6 +955,8 @@ if (isset($_POST['menu'])) {
 
         $res1 = $stmt->fetchAll();
 
+        funkit_setlog('result', $res1);
+
         $aha = get_total_pages('in', $uid);
 //        if (isset($noRules) && $noRules === true) {
 //            $aha = 1;
