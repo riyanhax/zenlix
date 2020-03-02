@@ -695,7 +695,7 @@ if (isset($_POST['menu'])) {
                         "SELECT t.* FROM tickets AS t
                                     WHERE t.id IN ($idts) AND status <> 3"
                     );
-                    $stmt->execute(array(':uid' => $uid));
+                    $stmt->execute();
                 }
 
                 funkit_setlog($idts);
