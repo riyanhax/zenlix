@@ -98,12 +98,11 @@ if (isset($_POST['menu'])) {
 
         if ($_SESSION['hd.rustem_sort_out'] === 'activity_24_hours') {
             try {
-                funkit_setlog('collegues', $collegues);
                 $noRules = true;
                 $stmt = $dbConnection->prepare(
                     "SELECT ticket_id FROM ticket_log WHERE id IN (  
                     SELECT MAX(id) FROM ticket_log
-                    WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW()) AND init_user_id IN :uids
+                    WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW()) AND init_user_id IN (:uids)
                     GROUP BY ticket_id)"
                 );
                 $stmt->execute([':uids' => $collegues]);
@@ -111,7 +110,7 @@ if (isset($_POST['menu'])) {
 
                 $idts = f3pick($idts,'ticket_id');
 
-                //funkit_setlog('idts', $idts);
+                funkit_setlog('idts', $idts);
 
                 if ($idts) {
                     $idts  = implode(',', $idts);
