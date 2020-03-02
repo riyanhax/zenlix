@@ -681,6 +681,8 @@ if (isset($_POST['menu'])) {
         $noRules = false; // with no checking user rules
         if ($_SESSION['hd.rustem_sort_in'] === 'activity_24_hours') {
             try {
+                funkit_setlog('units', $units);
+
                 $noRules = true;
                 $stmt    = $dbConnection->prepare(
                     "SELECT * FROM ticket_log WHERE (UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW())) AND (to_user_id = :uid OR to_unit_id IN ($units)) GROUP BY ticket_id"
