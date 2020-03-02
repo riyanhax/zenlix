@@ -792,20 +792,22 @@ if (isset($_POST['menu'])) {
         } else if ($priv_val == 1) {
             if (isset($_SESSION['hd.rustem_sort_in'])) {
                 if ($_SESSION['hd.rustem_sort_in'] == "ok") {
-                    $stmt = $dbConnection->prepare("SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
-                            where ((find_in_set(:user_id,user_to_id) and arch=:n) or
-                            (find_in_set(:n1,user_to_id) and unit_id IN ($in_query) and arch=:n2)) and status=:s AND s.id IN ($types)
-                            limit :start_pos, :perpage");
-                    $paramss = array(
-                        ':user_id' => $uid,
-                        ':s' => '1',
-                        ':n' => '0',
-                        ':n1' => '0',
-                        ':n2' => '0',
+                    $stmt = $dbConnection->prepare(
+                        "SELECT t.* FROM tickets AS t
+                                    WHERE ((FIND_IN_SET(:user_id,user_to_id) AND arch=:n) OR
+                                    (FIND_IN_SET(:n1,user_to_id) AND unit_id IN ($in_query) AND arch=:n2)) AND status=:s
+                                    LIMIT :start_pos, :perpage");
+                    $params = array(
+                        ':user_id'   => $uid,
+                        ':s'         => '1',
+                        ':n'         => '0',
+                        ':n1'        => '0',
+                        ':n2'        => '0',
                         ':start_pos' => $start_pos,
-                        ':perpage' => $perpage
+                        ':perpage'   => $perpage
                     );
-                    $stmt->execute(array_merge($vv, $paramss));
+
+                    $stmt->execute($params/*array_merge($vv, $paramss)*/);
                 } else if ($_SESSION['hd.rustem_sort_in'] == "free") {
                     $stmt = $dbConnection->prepare("SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
                             where ((find_in_set(:user_id,user_to_id) and arch=:n) or
@@ -862,20 +864,16 @@ if (isset($_POST['menu'])) {
              */
             if (! isset($_SESSION['hd.rustem_sort_in'])) {
                 $stmt = $dbConnection->prepare(
-				"SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
-                            WHERE ((find_in_set(:user_id,user_to_id) and arch=:n) OR
-                            (find_in_set(:n1,user_to_id) AND unit_id IN ($in_query) AND arch=:n2)) AND s.id IN ($types) AND status <> 3
+				"SELECT t.* FROM tickets AS t
+                            WHERE FIND_IN_SET(:uid, user_to_id) OR unit_id IN ($units))) AND status <> 3 AND arch = 0
                             ORDER BY $order_l
                             LIMIT :start_pos, :perpage");
-                $paramss = array(
-                    ':user_id' => $uid,
-                    ':n' => '0',
-                    ':n1' => '0',
-                    ':n2' => '0',
+                $params = [
+                    ':uid'       => $uid,
                     ':start_pos' => $start_pos,
-                    ':perpage' => $perpage
-                );
-                $stmt->execute(array_merge($vv, $paramss));
+                    ':perpage'   => $perpage
+                ];
+                $stmt->execute($params/*array_merge($vv, $paramss)*/);
             }
         } else if ($priv_val == 2) {
             //Главный начальник
