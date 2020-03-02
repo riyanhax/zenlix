@@ -98,6 +98,7 @@ if (isset($_POST['menu'])) {
 
         if ($_SESSION['hd.rustem_sort_out'] === 'activity_24_hours') {
             try {
+                funkit_setlog('collegues', $collegues);
                 $noRules = true;
                 $stmt = $dbConnection->prepare(
                     "SELECT ticket_id FROM ticket_log WHERE id IN (  
@@ -110,7 +111,7 @@ if (isset($_POST['menu'])) {
 
                 $idts = f3pick($idts,'ticket_id');
 
-                funkit_setlog('idts', $idts);
+                //funkit_setlog('idts', $idts);
 
                 if ($idts) {
                     $idts  = implode(',', $idts);
