@@ -620,10 +620,10 @@ if (isset($_POST['menu'])) {
         $priv_val  = priv_status($uid);
 
         //$unit_user = 1,2,3
-        $units = explode(",", $unit_user);
+        //$units = explode(",", $unit_user);
 
         //$units = array[1,2,3]
-        $units = implode("', '", $units);
+        //$units = implode("', '", $units);
 
         $ee = explode(",", $unit_user);
 
