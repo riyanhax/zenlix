@@ -601,7 +601,9 @@ if (isset($_POST['menu'])) {
         $UserHelper = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
 
         $user  = $UserHelper->getUserData('department:extended');
-        $units = $user['user']['unit'];
+
+        $collegues = implode(',', f3pick($user['collegues'], 'uid'));
+        $units     = $user['user']['unit'];
 
         $ar_res = array();
 
@@ -859,7 +861,7 @@ if (isset($_POST['menu'])) {
             }
 
 			 /**
-             * All status in the list with out canceled tickets
+             * `Show All` status in the list with out canceled tickets
              * status 3 == canceled tickets
              */
             if (! isset($_SESSION['hd.rustem_sort_in'])) {
@@ -873,7 +875,7 @@ if (isset($_POST['menu'])) {
                     ':start_pos' => $start_pos,
                     ':perpage'   => $perpage
                 ];
-                $stmt->execute($params/*array_merge($vv, $paramss)*/);
+                $stmt->execute($params);
             }
         } else if ($priv_val == 2) {
             //Главный начальник
@@ -931,16 +933,17 @@ if (isset($_POST['menu'])) {
              * All status in the list with out canceled tickets
              * status 3 == canceled tickets
              */
-            if (!isset($_SESSION['hd.rustem_sort_in'])) {
-//                $stmt = $dbConnection->prepare("SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
-//                            WHERE arch=:n AND s.id IN ($types) AND status <> 3
-//                            ORDER BY $order_l
-//                            LIMIT :start_pos, :perpage");
-//                $stmt->execute(array(
-//                    ':n' => '0',
-//                    ':start_pos' => $start_pos,
-//                    ':perpage' => $perpage
-//                ));
+            if (! isset($_SESSION['hd.rustem_sort_in'])) {
+                $stmt = $dbConnection->prepare(
+                    "SELECT t.* FROM tickets
+                                WHERE arch = 0 AND status <> 3 AND unit_id IN ($units) OR user_to_id IN ($collegues)
+                                ORDER BY $order_l
+                                LIMIT :start_pos, :perpage");
+
+                $stmt->execute([
+                    ':start_pos' => $start_pos,
+                    ':perpage'   => $perpage
+                ]);
             }
         }
 
