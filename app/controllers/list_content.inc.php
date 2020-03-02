@@ -110,16 +110,15 @@ if (isset($_POST['menu'])) {
 
                 $idts = f3pick($idts,'ticket_id');
 
-                funkit_setlog('idts', $idts);
-
                 if ($idts) {
                     $idts  = implode(',', $idts);
                     $stmt  = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t
                         WHERE t.id IN ($idts) AND status <> 3"
                     );
-                }
 
+                    $stmt->execute();
+                }
             } catch (Exception $e) {
                 funkit_setlog(date("D M j G:i:s T Y"), "list?out: activity_24_hours " . $e->getMessage());
             }
