@@ -951,11 +951,7 @@ if (isset($_POST['menu'])) {
             }
         }
 
-        funkit_setlog('SESSION', $_SESSION);
-
         $res1 = $stmt->fetchAll();
-
-        funkit_setlog('result', $res1);
 
         $aha = get_total_pages('in', $uid);
 //        if (isset($noRules) && $noRules === true) {
@@ -1181,7 +1177,6 @@ if (isset($_POST['menu'])) {
             ob_end_clean();
 
             array_push($ar_res, array(
-
                 'id' => $row['id'],
                 'style' => $style,
                 'prio' => $prio,
@@ -1190,7 +1185,7 @@ if (isset($_POST['menu'])) {
                 'sabj_pl' => $row['sabj_pl'],
                 'comment' => getLastComment($row['id']),
                 'msg1' => $row['msg'],
-                'msg' => str_replace('"', "", cutstr_help_ret(make_html(strip_tags($row['msg'])) , 'no')) ,
+                'msg' => str_replace('"', "", cutstr_help_ret(make_html(strip_tags($row['msg'])) , 'no')),
                 'hashname' => $row['hash_name'],
                 'cut_subj' => $cut_subj,
                 'get_user_hash_by_id_client' => get_user_hash_by_id($row['client_id']) ,
@@ -1218,6 +1213,9 @@ if (isset($_POST['menu'])) {
                 'ok_date' => $row['ok_date']
             ));
         }
+
+        funkit_setlog('array_result', $ar_res);
+
         $basedir = dirname(dirname(__FILE__));
 
         ////////////
