@@ -697,11 +697,7 @@ if (isset($_POST['menu'])) {
                     );
                     $stmt->execute();
                 }
-
-                funkit_setlog('idts', $idts);
-            } catch (Exception $e) {
-                funkit_setlog('error', $e->getMessage());
-            }
+            } catch (Exception $e) {}
         }
         /* WARNING: if rules no matter for user, `aha` variable should be 1 */
         if ($_SESSION['hd.rustem_sort_in'] === 'personal') { // for personal mode
@@ -942,15 +938,15 @@ if (isset($_POST['menu'])) {
              * status 3 == canceled tickets
              */
             if (!isset($_SESSION['hd.rustem_sort_in'])) {
-                $stmt = $dbConnection->prepare("SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
-                            WHERE arch=:n AND s.id IN ($types) AND status <> 3
-                            ORDER BY $order_l
-                            LIMIT :start_pos, :perpage");
-                $stmt->execute(array(
-                    ':n' => '0',
-                    ':start_pos' => $start_pos,
-                    ':perpage' => $perpage
-                ));
+//                $stmt = $dbConnection->prepare("SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+//                            WHERE arch=:n AND s.id IN ($types) AND status <> 3
+//                            ORDER BY $order_l
+//                            LIMIT :start_pos, :perpage");
+//                $stmt->execute(array(
+//                    ':n' => '0',
+//                    ':start_pos' => $start_pos,
+//                    ':perpage' => $perpage
+//                ));
             }
         }
 
