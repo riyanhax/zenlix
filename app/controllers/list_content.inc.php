@@ -699,7 +699,9 @@ if (isset($_POST['menu'])) {
                 }
 
                 funkit_setlog($idts);
-            } catch (Exception $e) {}
+            } catch (Exception $e) {
+                funkit_setlog('error', $e->getMessage());
+            }
         }
         /* WARNING: if rules no matter for user, `aha` variable should be 1 */
         if ($_SESSION['hd.rustem_sort_in'] === 'personal') { // for personal mode
