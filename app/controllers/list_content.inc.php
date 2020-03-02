@@ -16,7 +16,7 @@ if (isset($_POST['menu'])) {
 //    $types = f3pick($ticketTypes,'id'); // got all tickets types
 
     if ($_SESSION['hd.no_display'] === 'no_long_term') {
-        $ticketTypes = [19];
+        $ticketTypes = "19";
         //unset($types[array_search(19, $types)]);
     }
 
