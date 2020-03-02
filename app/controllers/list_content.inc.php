@@ -698,7 +698,7 @@ if (isset($_POST['menu'])) {
                     $stmt->execute();
                 }
 
-                funkit_setlog($idts);
+                funkit_setlog('idts', $idts);
             } catch (Exception $e) {
                 funkit_setlog('error', $e->getMessage());
             }
