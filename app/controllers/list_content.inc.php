@@ -116,9 +116,7 @@ if (isset($_POST['menu'])) {
 
                     $stmt->execute();
                 }
-            } catch (Exception $e) {
-                funkit_setlog(date("D M j G:i:s T Y"), "list?out: activity_24_hours " . $e->getMessage());
-            }
+            } catch (Exception $e) {}
         }
 
         /* WARNING: if rules no matter for user, `aha` variable should be 1 */
@@ -345,7 +343,6 @@ if (isset($_POST['menu'])) {
         //or id in (LIST TICKET_ID)
         
         $res1 = $stmt->fetchAll();
-        funkit_setlog('res1', $res1);
         
         $aha = get_total_pages('out', $uid);
         if (isset($noRules) && $noRules === true) {
@@ -601,6 +598,11 @@ if (isset($_POST['menu'])) {
     if ($_POST['menu'] == 'in') {
         $page = ($_POST['page']);
 
+        $UserHelper = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
+
+        $user  = $UserHelper->getUserData('department:extended');
+        $units = $user['user']['unit'];
+
         $ar_res = array();
 
         $perpage = '10';
@@ -680,28 +682,22 @@ if (isset($_POST['menu'])) {
         if ($_SESSION['hd.rustem_sort_in'] === 'activity_24_hours') {
             try {
                 $noRules = true;
-                $stmt = $dbConnection->prepare(
-                    "
-                          SELECT ticket_id FROM ticket_log
-                          WHERE id IN
-                          (SELECT MAX(id) FROM ticket_log WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW())
-                          GROUP BY ticket_id) "
+                $stmt    = $dbConnection->prepare(
+                    "SELECT * FROM ticket_log WHERE (UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW())) AND (to_user_id = :uid OR to_unit_id IN ($units)) GROUP BY ticket_id"
                 );
-                $stmt->execute();
-                $idts = $stmt->fetchAll(); // get tickets ids with activity of last 24 hours
+                $stmt->execute(['uid' => $uid]);
+                $idts = $stmt->fetchAll(PDO::FETCH_ASSOC); // get tickets ids with activity of last 24 hours
                 $idts = f3pick($idts,'ticket_id'); // get array with tickets numbers
-                $idts = implode(',',$idts);
+                $idts = implode(',', $idts);
+
                 if ($idts) {
-                    $units = $_SESSION['helpdesk_user_unit']; // 10 or 10,11
                     $stmt = $dbConnection->prepare(
-                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name 
-                              WHERE t.id IN ($idts) AND s.id IN ($types) AND user_to_id = :uid AND (t.user_to_id IS NOT NULL OR t.unit_id IN ($units)) AND status <> 3"
+                        "SELECT t.* FROM tickets AS t
+                                    WHERE t.id IN ($idts) AND status <> 3"
                     );
                     $stmt->execute(array(':uid' => $uid));
                 }
-            } catch (Exception $e) {
-                echo $e->getMessage();
-            }
+            } catch (Exception $e) {}
         }
         /* WARNING: if rules no matter for user, `aha` variable should be 1 */
         if ($_SESSION['hd.rustem_sort_in'] === 'personal') { // for personal mode

@@ -440,7 +440,6 @@ class UserHelper
                     );
 
                     $stmt->execute([
-                        //'uid'  => $user['uid'],
                         'unit' => $user['unit']
                     ]);
 
