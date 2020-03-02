@@ -690,6 +690,8 @@ if (isset($_POST['menu'])) {
                 $idts = f3pick($idts,'ticket_id'); // get array with tickets numbers
                 $idts = implode(',', $idts);
 
+                funkit_setlog('idts', $idts);
+
                 if ($idts) {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t
@@ -864,7 +866,6 @@ if (isset($_POST['menu'])) {
              * status 3 == canceled tickets
              */
             if (!isset($_SESSION['hd.rustem_sort_in'])) {
-
                 $stmt = $dbConnection->prepare(
 				"SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
                             WHERE ((find_in_set(:user_id,user_to_id) and arch=:n) OR
@@ -949,6 +950,8 @@ if (isset($_POST['menu'])) {
 //                ));
             }
         }
+
+        funkit_setlog('SESSION', $_SESSION);
 
         $res1 = $stmt->fetchAll();
 
