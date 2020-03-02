@@ -100,7 +100,7 @@ if (isset($_POST['menu'])) {
             try {
                 $noRules = true;
                 $stmt = $dbConnection->prepare(
-                    "SELECT ticket_id FROM ticket_log WHERE id IN (
+                    "SELECT ticket_id FROM ticket_log WHERE id IN (  
                     SELECT MAX(id) FROM ticket_log
                     WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW()) AND init_user_id IN :uids
                     GROUP BY ticket_id)"
@@ -109,6 +109,8 @@ if (isset($_POST['menu'])) {
                 $idts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 $idts = f3pick($idts,'ticket_id');
+
+                funkit_setlog('idts', $idts);
 
                 if ($idts) {
                     $idts  = implode(',', $idts);
