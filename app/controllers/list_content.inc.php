@@ -9,17 +9,18 @@ if ($CONF_HD['debug_mode'] == true) {
 
 if (isset($_POST['menu'])) {
     /* get ticket`s types */
-    $stmt = $dbConnection->prepare('SELECT id, name FROM subj');
-    $stmt->execute();
-    $ticketTypes = $stmt->fetchAll();
-
-    $types = f3pick($ticketTypes,'id'); // got all tickets types
+//    $stmt = $dbConnection->prepare('SELECT id, name FROM subj');
+//    $stmt->execute();
+//    $ticketTypes = $stmt->fetchAll();
+//
+//    $types = f3pick($ticketTypes,'id'); // got all tickets types
 
     if ($_SESSION['hd.no_display'] === 'no_long_term') {
-        unset($types[array_search(19, $types)]);
+        $ticketTypes = [19];
+        //unset($types[array_search(19, $types)]);
     }
 
-    $types = implode(',', $types);
+    //$types = implode(',', $types);
 
     if ($_POST['menu'] == 'out') {
         $UserHelper = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
@@ -694,8 +695,8 @@ if (isset($_POST['menu'])) {
 
                 if ($idts) {
                     $stmt = $dbConnection->prepare(
-                        "SELECT t.* FROM tickets AS t
-                                    WHERE t.id IN ($idts) AND status <> 3"
+                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                    WHERE t.id IN ($idts) AND status <> 3 AND s.id NOT IN ($ticketTypes)"
                     );
                     $stmt->execute();
                 }
@@ -705,8 +706,8 @@ if (isset($_POST['menu'])) {
         if ($_SESSION['hd.rustem_sort_in'] === 'personal') { // for personal mode
             $noRules = true;
             $stmt = $dbConnection->prepare(
-                "SELECT * FROM tickets
-                            WHERE arch = 0 AND status = 0 AND user_to_id = :uid
+                "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                            WHERE arch = 0 AND status = 0 AND user_to_id = :uid AND s.id NOT IN ($ticketTypes)
                             LIMIT :start_pos, :perpage");
 
             $stmt->execute([
@@ -719,10 +720,10 @@ if (isset($_POST['menu'])) {
         if ($priv_val == 0) {
             if (isset($_SESSION['hd.rustem_sort_in'])) {
                 if ($_SESSION['hd.rustem_sort_in'] == "ok") {
-                    $stmt = $dbConnection->prepare("
-                            SELECT * FROM tickets
-                            WHERE unit_id IN ($units) AND arch = 0 AND status= 1
-                            LIMIT :start_pos, :perpage");
+                    $stmt = $dbConnection->prepare(
+                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                    WHERE unit_id IN ($units) AND arch = 0 AND status= 1 AND s.id NOT IN ($ticketTypes)
+                                    LIMIT :start_pos, :perpage");
 
                     $params = [
                         ':start_pos' => $start_pos,
@@ -732,8 +733,8 @@ if (isset($_POST['menu'])) {
                     $stmt->execute($params);
                 } else if ($_SESSION['hd.rustem_sort_in'] == "free") {
                     $stmt = $dbConnection->prepare(
-                        "SELECT * FROM tickets
-                                    WHERE unit_id IN ($units) AND arch = 0 AND status = 0 AND lock_by= 0
+                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                    WHERE unit_id IN ($units) AND arch = 0 AND status = 0 AND lock_by= 0 AND s.id NOT IN ($ticketTypes)
                                     LIMIT :start_pos, :perpage");
                     $params = [
                         ':start_pos' => $start_pos,
@@ -743,8 +744,8 @@ if (isset($_POST['menu'])) {
                     $stmt->execute($params);
                 } else if ($_SESSION['hd.rustem_sort_in'] === 'ilock') {
                     $stmt = $dbConnection->prepare(
-                        "SELECT * FROM tickets
-                                    WHERE unit_id IN ($units) AND arch = 0 AND status = 0 AND lock_by = :uid
+                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                    WHERE unit_id IN ($units) AND arch = 0 AND status = 0 AND lock_by = :uid AND s.id NOT IN ($ticketTypes)
                                     LIMIT :start_pos, :perpage");
 
                     $stmt->execute([
@@ -754,8 +755,8 @@ if (isset($_POST['menu'])) {
                     ]);
                 } else if ($_SESSION['hd.rustem_sort_in'] == "lock") {
                     $stmt = $dbConnection->prepare(
-                            "SELECT * FROM tickets
-                                        WHERE t.unit_id IN ($units) AND arch = 0 AND (lock_by <> :uid AND lock_by <> 0) AND status = 0
+                            "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                        WHERE t.unit_id IN ($units) AND arch = 0 AND (lock_by <> :uid AND lock_by <> 0) AND status = 0 AND s.id NOT IN ($ticketTypes)
                                         LIMIT :start_pos, :perpage");
 
                     $stmt->execute([
@@ -772,8 +773,8 @@ if (isset($_POST['menu'])) {
              */
             if (!isset($_SESSION['hd.rustem_sort_in'])) {
                 $stmt = $dbConnection->prepare(
-                        "SELECT * FROM tickets
-                                    WHERE unit_id IN ($units) AND t.arch = 0 AND status <> 3
+                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                    WHERE unit_id IN ($units) AND t.arch = 0 AND status <> 3 AND s.id NOT IN ($ticketTypes)
                                     ORDER BY t.$order_l
                                     LIMIT :start_pos, :perpage");
 
@@ -857,7 +858,7 @@ if (isset($_POST['menu'])) {
              */
             if (! isset($_SESSION['hd.rustem_sort_in'])) {
                 $stmt = $dbConnection->prepare(
-				"SELECT t.* FROM tickets AS t
+				"SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
                             WHERE FIND_IN_SET(:uid, user_to_id) OR unit_id IN ($units))) AND status <> 3 AND arch = 0
                             ORDER BY $order_l
                             LIMIT :start_pos, :perpage");
@@ -873,8 +874,8 @@ if (isset($_POST['menu'])) {
             if (isset($_SESSION['hd.rustem_sort_in'])) {
                 if ($_SESSION['hd.rustem_sort_in'] == "ok") {
                     $stmt = $dbConnection->prepare(
-                        "SELECT * FROM tickets
-                                    WHERE arch = 0 AND status = 1
+                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                    WHERE arch = 0 AND status = 1 AND s.id NOT IN ($ticketTypes)
                                     LIMIT :start_pos, :perpage");
 
                     $stmt->execute([
@@ -883,8 +884,8 @@ if (isset($_POST['menu'])) {
                     ]);
                 } else if ($_SESSION['hd.rustem_sort_in'] == "free") {
                     $stmt = $dbConnection->prepare(
-                        "SELECT * FROM tickets
-                                    WHERE arch = 0 AND lock_by = 0 AND status = 0
+                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                    WHERE arch = 0 AND lock_by = 0 AND status = 0 AND s.id NOT IN ($ticketTypes)
                                     LIMIT :start_pos, :perpage");
 
                     $stmt->execute([
@@ -893,8 +894,8 @@ if (isset($_POST['menu'])) {
                     ]);
                 } else if ($_SESSION['hd.rustem_sort_in'] == "ilock") {
                     $stmt = $dbConnection->prepare(
-                        "SELECT * FROM tickets
-                                    WHERE arch = 0 AND lock_by = :uid AND status = 0
+                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                    WHERE arch = 0 AND lock_by = :uid AND status = 0 AND s.id NOT IN ($ticketTypes)
                             LIMIT :start_pos, :perpage");
 
                     $stmt->execute([
@@ -904,8 +905,8 @@ if (isset($_POST['menu'])) {
                     ]);
                 } else if ($_SESSION['hd.rustem_sort_in'] == "lock") {
                     $stmt = $dbConnection->prepare(
-                        "SELECT * FROM tickets
-                                    WHERE arch = 0 AND (lock_by <> :uid AND lock_by <> 0) AND (status = 0)
+                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                    WHERE arch = 0 AND (lock_by <> :uid AND lock_by <> 0) AND status = 0 AND s.id NOT IN ($ticketTypes)
                                     LIMIT :start_pos, :perpage");
 
                     $stmt->execute([
@@ -922,8 +923,8 @@ if (isset($_POST['menu'])) {
              */
             if (! isset($_SESSION['hd.rustem_sort_in'])) {
                 $stmt = $dbConnection->prepare(
-                    "SELECT * FROM tickets
-                                WHERE arch = 0 AND status <> 3
+                    "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                                WHERE arch = 0 AND status <> 3 AND s.id NOT IN ($ticketTypes)
                                 ORDER BY $order_l
                                 LIMIT :start_pos, :perpage");
 
