@@ -924,11 +924,12 @@ if (isset($_POST['menu'])) {
             if (! isset($_SESSION['hd.rustem_sort_in'])) {
                 $stmt = $dbConnection->prepare(
                     "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
-                                WHERE arch = 0 AND status <> 3 AND s.id NOT IN ($ticketTypes)
+                                WHERE arch = 0 AND status <> 3 AND s.id NOT IN (:types)
                                 ORDER BY $order_l
                                 LIMIT :start_pos, :perpage");
 
                 $stmt->execute([
+                    ':types'     => $ticketTypes,
                     ':start_pos' => $start_pos,
                     ':perpage'   => $perpage
                 ]);
