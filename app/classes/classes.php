@@ -440,7 +440,7 @@ class UserHelper
                     );
 
                     $stmt->execute([
-                        'unit' => $user['unit']
+                        ':unit' => $user['unit']
                     ]);
 
                     $colleagues = $stmt->fetchAll(PDO::FETCH_ASSOC);

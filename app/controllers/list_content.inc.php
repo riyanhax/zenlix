@@ -681,13 +681,11 @@ if (isset($_POST['menu'])) {
         $noRules = false; // with no checking user rules
         if ($_SESSION['hd.rustem_sort_in'] === 'activity_24_hours') {
             try {
-                funkit_setlog('units', $units);
-
                 $noRules = true;
                 $stmt    = $dbConnection->prepare(
-                    "SELECT * FROM ticket_log WHERE (UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW())) AND (to_user_id = :uid OR to_unit_id IN ($units)) GROUP BY ticket_id"
+                    "SELECT ticket_id FROM ticket_log WHERE (UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW())) AND (to_user_id = :uid OR to_unit_id IN ($units)) GROUP BY ticket_id"
                 );
-                $stmt->execute(['uid' => $uid]);
+                $stmt->execute([':uid' => $uid]);
                 $idts = $stmt->fetchAll(PDO::FETCH_ASSOC); // get tickets ids with activity of last 24 hours
                 $idts = f3pick($idts,'ticket_id'); // get array with tickets numbers
                 $idts = implode(',', $idts);
@@ -699,6 +697,8 @@ if (isset($_POST['menu'])) {
                     );
                     $stmt->execute(array(':uid' => $uid));
                 }
+
+                funkit_setlog($idts);
             } catch (Exception $e) {}
         }
         /* WARNING: if rules no matter for user, `aha` variable should be 1 */
