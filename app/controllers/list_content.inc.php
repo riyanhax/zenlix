@@ -935,7 +935,7 @@ if (isset($_POST['menu'])) {
              */
             if (! isset($_SESSION['hd.rustem_sort_in'])) {
                 $stmt = $dbConnection->prepare(
-                    "SELECT t.* FROM tickets
+                    "SELECT * FROM tickets
                                 WHERE arch = 0 AND status <> 3 AND unit_id IN ($units) OR user_to_id IN ($collegues)
                                 ORDER BY $order_l
                                 LIMIT :start_pos, :perpage");
