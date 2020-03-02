@@ -954,9 +954,10 @@ if (isset($_POST['menu'])) {
         $res1 = $stmt->fetchAll();
 
         $aha = get_total_pages('in', $uid);
-//        if (isset($noRules) && $noRules === true) {
-//            $aha = 1;
-//        }
+
+        if (isset($noRules) && $noRules === true) {
+            $aha = 1;
+        }
 
         if (!isset($_SESSION['hd.rustem_sort_in'])) {
             if (isset($_SESSION['zenlix_list_in_sort'])) {
@@ -1213,8 +1214,6 @@ if (isset($_POST['menu'])) {
                 'ok_date' => $row['ok_date']
             ));
         }
-
-        funkit_setlog('array_result', $ar_res);
 
         $basedir = dirname(dirname(__FILE__));
 
