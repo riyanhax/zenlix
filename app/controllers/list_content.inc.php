@@ -101,7 +101,7 @@ if (isset($_POST['menu'])) {
                 $noRules = true;
                 $stmt = $dbConnection->prepare(
                     "SELECT ticket_id FROM ticket_log 
-                                WHERE (UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW())) AND init_user_id IN (:uids)
+                                WHERE (UNIX_TIMESTAMP(date_op) + 86400) > UNIX_TIMESTAMP(NOW()) AND init_user_id IN (:uids)
                                 GROUP BY ticket_id)"
                 );
                 $stmt->execute([':uids' => $collegues]);
