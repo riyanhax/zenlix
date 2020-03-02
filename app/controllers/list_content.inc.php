@@ -690,8 +690,6 @@ if (isset($_POST['menu'])) {
                 $idts = f3pick($idts,'ticket_id'); // get array with tickets numbers
                 $idts = implode(',', $idts);
 
-                funkit_setlog('idts', $idts);
-
                 if ($idts) {
                     $stmt = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t
@@ -808,8 +806,7 @@ if (isset($_POST['menu'])) {
                         ':perpage' => $perpage
                     );
                     $stmt->execute(array_merge($vv, $paramss));
-                }
-                else if ($_SESSION['hd.rustem_sort_in'] == "free") {
+                } else if ($_SESSION['hd.rustem_sort_in'] == "free") {
                     $stmt = $dbConnection->prepare("SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
                             where ((find_in_set(:user_id,user_to_id) and arch=:n) or
                             (find_in_set(:n1,user_to_id) and unit_id IN ($in_query) and arch=:n2)) and lock_by=:lb and status=:s AND s.id IN ($types)
@@ -825,8 +822,7 @@ if (isset($_POST['menu'])) {
                         ':perpage' => $perpage
                     );
                     $stmt->execute(array_merge($vv, $paramss));
-                }
-                else if ($_SESSION['hd.rustem_sort_in'] == "ilock") {
+                } else if ($_SESSION['hd.rustem_sort_in'] == "ilock") {
                     $stmt = $dbConnection->prepare("SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
                             WHERE ((find_in_set(:user_id,user_to_id) AND arch=:n) OR
                             (find_in_set(:n1,user_to_id) AND unit_id IN ($in_query) AND arch=:n2)) AND lock_by=:lb AND s.id IN ($types) AND status = :status
@@ -842,20 +838,19 @@ if (isset($_POST['menu'])) {
                         ':perpage'   => $perpage
                     );
                     $stmt->execute(array_merge($vv, $paramss));
-                }
-                else if ($_SESSION['hd.rustem_sort_in'] == "lock") {
+                } else if ($_SESSION['hd.rustem_sort_in'] == "lock") {
                     $stmt = $dbConnection->prepare("SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
                             WHERE ((find_in_set(:user_id,user_to_id) AND arch=:n) or
                             (find_in_set(:n1,user_to_id) AND unit_id IN ($in_query) AND arch=:n2)) AND (lock_by<>:lb AND lock_by<>0) AND (status=0) AND s.id IN ($types)
                             LIMIT :start_pos, :perpage");
                     $paramss = array(
-                        ':user_id' => $uid,
-                        ':lb' => $uid,
-                        ':n' => '0',
-                        ':n1' => '0',
-                        ':n2' => '0',
+                        ':user_id'   => $uid,
+                        ':lb'        => $uid,
+                        ':n'         => '0',
+                        ':n1'        => '0',
+                        ':n2'        => '0',
                         ':start_pos' => $start_pos,
-                        ':perpage' => $perpage
+                        ':perpage'   => $perpage
                     );
                     $stmt->execute(array_merge($vv, $paramss));
                 }
@@ -865,7 +860,7 @@ if (isset($_POST['menu'])) {
              * All status in the list with out canceled tickets
              * status 3 == canceled tickets
              */
-            if (!isset($_SESSION['hd.rustem_sort_in'])) {
+            if (! isset($_SESSION['hd.rustem_sort_in'])) {
                 $stmt = $dbConnection->prepare(
 				"SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
                             WHERE ((find_in_set(:user_id,user_to_id) and arch=:n) OR
@@ -952,6 +947,8 @@ if (isset($_POST['menu'])) {
         }
 
         $res1 = $stmt->fetchAll();
+
+        funkit_setlog('SESSION', $_SESSION);
 
         $aha = get_total_pages('in', $uid);
 
