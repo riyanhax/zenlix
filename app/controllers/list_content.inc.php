@@ -109,6 +109,7 @@ if (isset($_POST['menu'])) {
                 $idts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 funkit_setlog('uids', $collegues);
+                funkit_setlog('idts', $idts);
 
                 $idts = f3pick($idts,'ticket_id');
 
