@@ -105,7 +105,7 @@ if (isset($_POST['menu'])) {
                     WHERE UNIX_TIMESTAMP(date_op) + 86400 > UNIX_TIMESTAMP(NOW()) AND init_user_id IN :uids
                     GROUP BY ticket_id)"
                 );
-                $stmt->execute([':uid' => $uid]);
+                $stmt->execute([':uids' => $collegues]);
                 $idts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 $idts = f3pick($idts,'ticket_id');
@@ -114,13 +114,7 @@ if (isset($_POST['menu'])) {
                     $idts  = implode(',', $idts);
                     $stmt  = $dbConnection->prepare(
                         "SELECT t.* FROM tickets AS t
-                        WHERE t.id IN ($idts) /*AND user_to_id = :uid*//* AND (user_to_id IS NOT NULL OR t.unit_id IN (:unit))*/ AND status <> 3"
-                    );
-                    $stmt->execute(
-                        [
-                            ':uid'  => $uid,
-                            ':unit' => $user['user']['unit'],
-                        ]
+                        WHERE t.id IN ($idts) AND status <> 3"
                     );
                 }
 
