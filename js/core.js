@@ -6972,11 +6972,9 @@ $.ajax({
         });
     };
 
-    // document.getElementById('search').document.addEventListener('change', function (event) {
-    //     console.log('searching...');
-    // });
-
     $('#search').on('input', function() {
-        console.log('searching..');
+        if (ispath('list?arch')) {
+            console.log('searching in arch...');
+        }
     });
 });
