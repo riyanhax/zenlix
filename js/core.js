@@ -6971,4 +6971,8 @@ $.ajax({
             }
         });
     };
+
+    document.getElementById('search').document.addEventListener('change', function (event) {
+        console.log('searching...');
+    });
 });
