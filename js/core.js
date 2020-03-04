@@ -6976,7 +6976,7 @@ $.ajax({
     //     console.log('searching...');
     // });
 
-    $(document).on('change', '#search', function() {
-        console.log('searching...');
+    $('#search').on('input', function() {
+        console.log('searching..');
     });
 });
