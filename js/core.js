@@ -6971,4 +6971,12 @@ $.ajax({
             }
         });
     };
+
+    // document.getElementById('search').document.addEventListener('change', function (event) {
+    //     console.log('searching...');
+    // });
+
+    $(document).on('change', 'input#search', function() {
+        console.log('searching...');
+    });
 });
