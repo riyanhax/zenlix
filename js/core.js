@@ -6973,6 +6973,7 @@ $.ajax({
     };
 
     $('#search').on('input', function() {
+        console.log(window.location.href);
         if (ispath('list?arch')) {
             console.log('searching in arch...');
         }
