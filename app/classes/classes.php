@@ -423,12 +423,10 @@ class UserHelper
                 );
                 $stmt->execute([':uid' => $this->uid]);
 
-                $data = $stmt->fetchAll();
-
-                break;
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
             case 'department:extended':
                 $stmt = $this->dbConnection->prepare(
-                    'SELECT id as uid, unit FROM users WHERE id = :uid'
+                    'SELECT id as uid, unit, priv FROM users WHERE id = :uid'
                 );
                 $stmt->execute([':uid' => $this->uid]);
 
@@ -455,5 +453,25 @@ class UserHelper
         }
 
         return [];
+    }
+}
+
+class UserObserver
+{
+    protected $dbConnection;
+
+    public function __construct($dbConnection)
+    {
+        $this->dbConnection = $dbConnection;
+    }
+
+    public  function getUserData($uid)
+    {
+        $stmt = $this->dbConnection->prepare(
+            'SELECT id, fio, login, status, priv, unit, uniq_id FROM users WHERE id = :uid'
+        );
+        $stmt->execute([':uid' => $uid]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
     }
 }

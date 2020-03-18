@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "/home/admin/web/alex.example.com/public_html/functions.inc.php";
+require_once "/var/www/zenlix/functions.inc.php";
 
 if ($CONF_HD['debug_mode'] == true) {
     error_reporting(E_ALL ^ E_NOTICE);
@@ -1622,7 +1622,6 @@ if (isset($_POST['menu'])) {
     }
 
     if ($_POST['menu'] == 'arch') {
-        
         $page = ($_POST['page']);
         $perpage = '10';
         if (isset($_SESSION['hd.rustem_list_arch'])) {
@@ -1783,7 +1782,7 @@ if (isset($_POST['menu'])) {
                 $twig = new Twig_Environment($loader, array(
                     'cache' => $basedir . '/cache',
                 ));
-            } 
+            }
             else {
                 $twig = new Twig_Environment($loader);
             }

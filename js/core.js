@@ -6972,9 +6972,15 @@ $.ajax({
         });
     };
 
-    $('#search').on('input', function() {
-        if (window.location.href.match(/list\?arch/g)) {
-            console.log('searching in arch...');
+    $('#search-btn').on('click', function (event) {
+        if (window.location.href.match(/list\?arch/g) || window.location.href.match(/mode=archive/gi)) {
+            event.preventDefault();
+            
+            let input = document.getElementById('search').value;
+
+            if (input.length >= 4) {
+                window.location.href = '/search?input=' + input + '&mode=archive';
+            }
         }
     });
 });

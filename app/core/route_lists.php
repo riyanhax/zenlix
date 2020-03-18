@@ -41,6 +41,7 @@ $router->map('GET', '/mailers', 'mailersAction');
 
 ///////////////////////////////////////
 $router->map('GET', '/manual', 'manualAction');
+$router->map('GET', '/search', 'search');
 //$router->map('GET','/ticket_update','updating');
 
 $router->map('GET', '/version', 'versionAction');

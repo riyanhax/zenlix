@@ -155,8 +155,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                     $button_sort_out['main'] = "active";
             }
         }
-    } 
-    else if (isset($_GET['arch'])) {
+    } else if (isset($_GET['arch'])) {
         $status_arch = "active";
         $priv_val = priv_status($_SESSION['helpdesk_user_id']);
         if ($priv_val == "0") {
@@ -182,7 +181,6 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
         
         $r = "arch";
         if (isset($_SESSION['hd.rustem_list_arch'])) {
-            
             switch ($_SESSION['hd.rustem_list_arch']) {
                 case '10':
                     $ac['10'] = "active";
@@ -200,9 +198,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
                     $ac['10'] = "active";
             }
         }
-    } 
-    else if (isset($_GET['find'])) {
-        
+    } else if (isset($_GET['find'])) {
         //$status_find="active";
         $priv_val = priv_status($_SESSION['helpdesk_user_id']);
         if ($priv_val == "0") {
@@ -224,8 +220,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
         
         //Grab output
         ob_end_clean();
-    } 
-    else {
+    } else {
         $_GET['in'] = '1';
         $status_in = "active";
         

@@ -894,4 +894,9 @@ function eventsReport() {
         }
     }
 }
+
+function search() {
+    global $dbConnection, $CONF;
+    require_once 'app/controllers/search/search.php';
+}
 ?>

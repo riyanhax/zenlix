@@ -4,7 +4,7 @@
 
 //session_start();
 
-require_once ("/home/admin/web/alex.example.com/public_html/functions.inc.php");
+require_once ("/var/www/zenlix/functions.inc.php");
 try {
     $rkeys = array_keys($_GET);
 

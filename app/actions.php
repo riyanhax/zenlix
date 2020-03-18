@@ -10946,6 +10946,44 @@ Successfully cleared!
                 exit;
             }
         }
+
+        if ($mode === 'search') {
+            $basedir = dirname(dirname(__FILE__));
+
+            require_once ($basedir . '/library/Twig/Autoloader.php');
+
+            try {
+                switch ($_POST['type']) {
+                    case 'arch':
+                        $data = [
+                            0 => [
+                                'id' => 2,
+                                'subj' => 'theme 2',
+                            ],
+                            1 => [
+                                'id' => 3,
+                                'subj' => 'theme 3',
+                            ],
+                        ];
+                        $loader = new Twig_Loader_Filesystem($basedir . '/views');
+                        $twig   = new Twig_Environment($loader);
+
+                        $template = $twig->loadTemplate('arch.view.tmpl');
+
+                        echo $template->render([
+                            'data' => $data
+                        ]);
+
+                        //echo json_encode($data);
+                        //should be the search inside archive
+                        break;
+                }
+            } catch (Exception $e) {
+                echo json_encode($e->getMessage);
+            }
+
+            exit;
+        }
     }
 }
 ?>
