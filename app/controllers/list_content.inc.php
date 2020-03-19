@@ -1,6 +1,9 @@
 <?php
 session_start();
-require_once "/var/www/zenlix/functions.inc.php";
+
+global $CONF_HD;
+
+require_once $CONF_HD['root'] . '/functions.inc.php';
 
 if ($CONF_HD['debug_mode'] == true) {
     error_reporting(E_ALL ^ E_NOTICE);

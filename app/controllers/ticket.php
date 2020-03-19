@@ -2,9 +2,10 @@
 //error_reporting(E_ALL);
 //ini_set("display_errors", 1);
 
-//session_start();
+//session_star
+global $CONF_HD;
+require_once ($CONF_HD['root'] . "/functions.inc.php");
 
-require_once ("/var/www/zenlix/functions.inc.php");
 try {
     $rkeys = array_keys($_GET);
 
