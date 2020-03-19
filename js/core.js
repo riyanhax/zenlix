@@ -6975,11 +6975,21 @@ $.ajax({
     $('#search-btn').on('click', function (event) {
         if (window.location.href.match(/list\?arch/g) || window.location.href.match(/mode=archive/gi)) {
             event.preventDefault();
-            
+
             let input = document.getElementById('search').value;
 
             if (input.length >= 4) {
                 window.location.href = '/search?input=' + input + '&mode=archive';
+            }
+        }
+
+        if (window.location.href.match(/list\?out/g) || window.location.href.match(/mode=out/gi)) {
+            event.preventDefault();
+
+            let input = document.getElementById('search').value;
+
+            if (input.length >= 4) {
+                window.location.href = '/search?input=' + input + '&mode=out';
             }
         }
     });
