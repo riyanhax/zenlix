@@ -2,7 +2,7 @@
 //error_reporting(E_ALL);
 //ini_set("display_errors", 1);
 
-//session_star
+//session_start();
 global $CONF_HD;
 require_once ($CONF_HD['root'] . "/functions.inc.php");
 
