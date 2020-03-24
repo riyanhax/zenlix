@@ -3,12 +3,9 @@ session_start();
 
 global $CONF_HD;
 
-require_once $CONF_HD['root'] . '/functions.inc.php';
+require_once '/var/www/zenlix/functions.inc.php';
+require_once '/var/www/zenlix/app/classes/classes.php';
 
-if ($CONF_HD['debug_mode'] == true) {
-    error_reporting(E_ALL ^ E_NOTICE);
-    error_reporting(0);
-}
 
 if (isset($_POST['menu'])) {
     /* get ticket`s types */
