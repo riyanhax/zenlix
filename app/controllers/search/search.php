@@ -12,6 +12,7 @@ try {
 
     $loader = new Twig_Loader_Filesystem($CONF_HD['root'] . '/app/views');
     $twig   = new Twig_Environment($loader);
+    $data   = [];
 
     switch ($_GET['mode']) {
         case 'archive':
@@ -28,25 +29,39 @@ try {
             }
 
             $stmt = $dbConnection->prepare(
-                "SELECT id, user_init_id, user_to_id, date_create, subj, sabj_pl, msg, client_id, unit_id, status, hash_name, comment, is_read, lock_by, ok_by, ok_date FROM tickets 
-                            WHERE (msg LIKE :a OR subj LIKE :b) AND arch = :archive $condition ORDER BY id DESC"
+                "SELECT ticket_id FROM ticket_log LEFT JOIN tickets ON ticket_log.ticket_id=tickets.id WHERE ticket_log.msg LIKE :a OR tickets.subj LIKE :b"
             );
 
             $stmt->execute([
-                ':archive' => '1',
-                ':a'       => $_GET['input'],
-                ':b'       => $_GET['input']
+                ':a' => $_GET['input'],
+                ':b' => $_GET['input'],
             ]);
 
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $idts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $userObserver = new UserObserver($dbConnection);
+            if ($idts) {
+                $idts = implode(',', f3pick($idts, 'ticket_id'));
 
-            foreach ($data as $k => $row) {
-                $data[$k]['user_init_id'] = $userObserver->getUserData($row['user_init_id']);
-                $data[$k]['user_to_id']   = $userObserver->getUserData($row['user_to_id']);
-                $data[$k]['client_id']    = $userObserver->getUserData($row['client_id']);
-                $data[$k]['ok_by']        = $userObserver->getUserData($row['ok_by']);
+                $stmt = $dbConnection->prepare(
+                    "SELECT id, user_init_id, user_to_id, date_create, subj, sabj_pl, msg, client_id, unit_id, status, hash_name, comment, is_read, lock_by, ok_by, ok_date FROM tickets 
+                            WHERE id IN ($idts) AND arch = :archive $condition ORDER BY id DESC"
+                );
+
+                $stmt->execute([
+                    ':archive' => '1',
+                    ':b'       => $_GET['input']
+                ]);
+
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $userObserver = new UserObserver($dbConnection);
+
+                foreach ($data as $k => $row) {
+                    $data[$k]['user_init_id'] = $userObserver->getUserData($row['user_init_id']);
+                    $data[$k]['user_to_id']   = $userObserver->getUserData($row['user_to_id']);
+                    $data[$k]['client_id']    = $userObserver->getUserData($row['client_id']);
+                    $data[$k]['ok_by']        = $userObserver->getUserData($row['ok_by']);
+                }
             }
 
             $template = $twig->loadTemplate('/tickets/arch.view.tmpl');
