@@ -83,25 +83,36 @@ try {
             }
 
             $stmt = $dbConnection->prepare(
-                "SELECT id, user_init_id, user_to_id, date_create, subj, sabj_pl, msg, client_id, unit_id, status, hash_name, comment, is_read, lock_by, ok_by, ok_date FROM tickets
-                            WHERE arch != :archive AND (msg LIKE :a OR subj LIKE :b) $condition ORDER BY id DESC"
+                "SELECT t_id FROM comments LEFT JOIN tickets ON comments.t_id=tickets.id WHERE comments.comment_text LIKE :a OR tickets.subj LIKE :b"
             );
 
             $stmt->execute([
-                ':archive' => 1,
-                ':a'       => $_GET['input'],
-                ':b'       => $_GET['input']
+                ':a' => $_GET['input'],
+                ':b' => $_GET['input'],
             ]);
 
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $idts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $userObserver = new UserObserver($dbConnection);
+            if ($idts) {
+                $stmt = $dbConnection->prepare(
+                    "SELECT id, user_init_id, user_to_id, date_create, subj, sabj_pl, msg, client_id, unit_id, status, hash_name, comment, is_read, lock_by, ok_by, ok_date FROM tickets
+                            WHERE id IN ($idts) AND arch != :archive $condition ORDER BY id DESC"
+                );
 
-            foreach ($data as $k => $row) {
-                $data[$k]['user_init_id'] = $userObserver->getUserData($row['user_init_id']);
-                $data[$k]['user_to_id']   = $userObserver->getUserData($row['user_to_id']);
-                $data[$k]['client_id']    = $userObserver->getUserData($row['client_id']);
-                $data[$k]['ok_by']        = $userObserver->getUserData($row['ok_by']);
+                $stmt->execute([
+                    ':archive' => 1,
+                ]);
+
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $userObserver = new UserObserver($dbConnection);
+
+                foreach ($data as $k => $row) {
+                    $data[$k]['user_init_id'] = $userObserver->getUserData($row['user_init_id']);
+                    $data[$k]['user_to_id']   = $userObserver->getUserData($row['user_to_id']);
+                    $data[$k]['client_id']    = $userObserver->getUserData($row['client_id']);
+                    $data[$k]['ok_by']        = $userObserver->getUserData($row['ok_by']);
+                }
             }
 
             $template = $twig->loadTemplate('/tickets/out.view.tmpl');
