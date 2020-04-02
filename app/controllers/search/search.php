@@ -29,7 +29,7 @@ try {
             }
 
             $stmt = $dbConnection->prepare(
-                "SELECT ticket_id FROM ticket_log LEFT JOIN tickets ON ticket_log.ticket_id=tickets.id WHERE ticket_log.msg LIKE :a OR tickets.subj LIKE :b"
+                "SELECT t_id FROM comments LEFT JOIN tickets ON comments.t_id=tickets.id WHERE comments.comment_text LIKE :a OR tickets.subj LIKE :b"
             );
 
             $stmt->execute([
@@ -40,7 +40,7 @@ try {
             $idts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($idts) {
-                $idts = implode(',', f3pick($idts, 'ticket_id'));
+                $idts = implode(',', f3pick($idts, 't_id'));
 
                 $stmt = $dbConnection->prepare(
                     "SELECT id, user_init_id, user_to_id, date_create, subj, sabj_pl, msg, client_id, unit_id, status, hash_name, comment, is_read, lock_by, ok_by, ok_date FROM tickets 
