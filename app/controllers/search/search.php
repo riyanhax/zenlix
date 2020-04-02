@@ -94,6 +94,8 @@ try {
             $idts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($idts) {
+                $idts = implode(',', f3pick($idts, 't_id'));
+                
                 $stmt = $dbConnection->prepare(
                     "SELECT id, user_init_id, user_to_id, date_create, subj, sabj_pl, msg, client_id, unit_id, status, hash_name, comment, is_read, lock_by, ok_by, ok_date FROM tickets
                             WHERE id IN ($idts) AND arch != :archive $condition ORDER BY id DESC"
