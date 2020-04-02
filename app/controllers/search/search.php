@@ -49,7 +49,6 @@ try {
 
                 $stmt->execute([
                     ':archive' => '1',
-                    ':b'       => $_GET['input']
                 ]);
 
                 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
