@@ -6978,7 +6978,7 @@ $.ajax({
 
             let input = document.getElementById('search').value;
 
-            if (input.length >= 4) {
+            if (input.length >= 4 || input.match(/^[0-9]+$/i)) {
                 window.location.href = '/search?input=' + input + '&mode=archive';
             }
         }
