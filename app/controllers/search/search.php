@@ -70,7 +70,7 @@ try {
 
             switch ($user['user']['priv']) {
                 case 0:
-                    $condition = "AND user_init_id IN (" . implode(',', $collegues) . ") OR unit_id IN (" . implode(',', $departments) . ")";
+                    $condition = "AND user_init_id IN (" . implode(',', $collegues) . ") AND unit_id IN (" . implode(',', $departments) . ")";
                     break;
                 case 2://everywhere
                     $condition = "";
