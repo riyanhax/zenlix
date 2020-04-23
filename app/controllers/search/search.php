@@ -70,7 +70,7 @@ try {
 
             switch ($user['user']['priv']) {
                 case 0:
-                    $condition = "AND user_init_id IN (" . implode(',', $collegues) . ") OR unit_id IN (" . implode(',', $departments) . ")";
+                    $condition = "user_init_id IN (" . implode(',', $collegues) . ") OR unit_id IN (" . implode(',', $departments) . ") AND";
                     break;
                 case 2://everywhere
                     $condition = "";
@@ -81,7 +81,7 @@ try {
                 "SELECT t.id, t.user_init_id, t.user_to_id, t.date_create, t.subj, t.sabj_pl, t.msg, t.client_id, t.unit_id, t.status, t.hash_name, t.comment, t.is_read, t.lock_by, t.ok_by, t.ok_date 
                             FROM tickets AS t
                             LEFT JOIN comments c ON t.id = c.t_id
-                            WHERE arch != :archive AND t.id = :idt OR c.comment_text LIKE :a OR t.subj LIKE :b OR t.msg LIKE :msg $condition GROUP BY t.id ORDER BY t.id DESC"
+                            WHERE $condition arch != :archive AND t.id = :idt OR c.comment_text LIKE :a OR t.subj LIKE :b OR t.msg LIKE :msg GROUP BY t.id ORDER BY t.id DESC"
             );
 
             $stmt->execute([
