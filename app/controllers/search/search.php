@@ -77,9 +77,6 @@ try {
                     break;
             }
 
-            var_dump($condition);
-            exit;
-
             $stmt = $dbConnection->prepare(
                 "SELECT t.id, t.user_init_id, t.user_to_id, t.date_create, t.subj, t.sabj_pl, t.msg, t.client_id, t.unit_id, t.status, t.hash_name, t.comment, t.is_read, t.lock_by, t.ok_by, t.ok_date 
                             FROM tickets AS t
