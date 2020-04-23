@@ -26,6 +26,9 @@ if (isset($_POST['menu'])) {
 
         $user = $UserHelper->getUserData('department:extended');
 
+        $colleguesDepartments = f3pick($user['collegues'], 'unit');
+        $colleguesDepartments = implode(',', array_unique($colleguesDepartments));
+
         $collegues = f3pick($user['collegues'], 'uid');
         $collegues = implode(',', $collegues);
 
@@ -244,7 +247,7 @@ if (isset($_POST['menu'])) {
             } elseif (! isset($_SESSION['hd.rustem_sort_out'])) {
                 $stmt = $dbConnection->prepare(
                     "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name  
-                                WHERE user_init_id IN ($collegues) AND arch = 0 AND s.id IN ($types) AND status = 0
+                                WHERE user_init_id IN ($collegues) OR unit_id IN($colleguesDepartments) AND arch = 0 AND s.id IN ($types) AND status = 0
                                 ORDER BY $order_l LIMIT :start_pos, :perpage");
 
                 $stmt->execute([
