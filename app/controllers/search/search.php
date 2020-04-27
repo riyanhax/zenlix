@@ -72,7 +72,7 @@ try {
             //TODO: select ids first with condition | loop values
             foreach ($collegues as $colleague) {
                 if ($colleague) {
-                    $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE FIND_IN_SET($colleague, user_init_id)");
+                    $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE user_init_id IN ($colleague)");
 
                     $stmt->execute();
 
@@ -84,7 +84,7 @@ try {
 
             foreach ($departments as $department) {
                 if ($department) {
-                    $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE FIND_IN_SET($department, unit_id)");
+                    $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE unit_id IN ($department)");
 
                     $stmt->execute();
 
