@@ -433,20 +433,25 @@ class UserHelper
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($user) {
-                    $stmt = $this->dbConnection->prepare(
-                        'SELECT id as uid, unit FROM users WHERE unit IN (:unit)'
-                    );
+                    $units = explode(',', $user['unit']);
 
-                    $stmt->execute([
-                        ':unit' => $user['unit']
-                    ]);
+                    foreach ($units as $unit) {
+                        $stmt = $this->dbConnection->prepare(
+                            'SELECT id as uid, unit FROM users WHERE unit IN (:unit)'
+                        );
 
-                    $colleagues = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $stmt->execute([
+                            ':unit' => $unit
+                        ]);
 
-                    $response = [
-                        'user'      => $user,
-                        'collegues' => $colleagues,
-                    ];
+                        $colleagues = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                        foreach ($colleagues as $colleague) {
+                            $response['collegues'][] = $colleague;
+                        }
+                    }
+                    
+                    $response['user'] = $user;
                 }
 
                 return $response ?? [];
