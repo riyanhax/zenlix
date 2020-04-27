@@ -68,9 +68,32 @@ try {
             $collegues   = f3pick($user['collegues'], 'uid');
             $departments = array_unique(f3pick($user['collegues'], 'unit'));
 
+            $idts = '';
+            //TODO: select ids first with condition | loop values
+            foreach ($collegues as $colleague) {
+                $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE FIND_IN_SET($colleague, user_init_id)");
+
+                $stmt->execute();
+
+                $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $idts .= implode(',', f3pick($fetch, 'id'));
+            }
+
+            foreach ($departments as $department) {
+                $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE FIND_IN_SET($department, unit_id)");
+
+                $stmt->execute();
+
+                $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                $idts .= implode(',', f3pick($fetch, 'id'));
+            }
+
             switch ($user['user']['priv']) {
                 case 0:
-                    $condition = "AND (user_init_id IN (" . implode(',', $collegues) . ") OR unit_id IN (" . implode(',', $departments) . "))";
+                    //$condition = "AND (user_init_id IN (" . implode(',', $collegues) . ") OR unit_id IN (" . implode(',', $departments) . "))";
+                    $condition = "AND t.id IN ($idts)";
                     break;
                 case 2://everywhere
                     $condition = "";
@@ -78,7 +101,7 @@ try {
             }
 
             $stmt = $dbConnection->prepare(
-                "SELECT t.id, t.user_init_id, t.user_to_id, t.date_create, t.subj, t.sabj_pl, t.msg, t.client_id, t.unit_id, t.status, t.hash_name, t.comment, t.is_read, t.lock_by, t.ok_by, t.ok_date 
+                "SELECT t.id, t.user_init_id, t.user_to_id, t.date_create, t.subj, t.sabj_pl, t.msg, t.client_id, t.unit_id, t.status, t.hash_name, t.comment, t.is_read, t.lock_by, t.ok_by, t.ok_date
                             FROM tickets AS t
                             LEFT JOIN comments c ON t.id = c.t_id
                             WHERE arch <> :archive AND (t.id = :idt OR c.comment_text LIKE :a OR t.subj LIKE :b OR t.msg LIKE :msg) $condition GROUP BY t.id ORDER BY t.id DESC"
