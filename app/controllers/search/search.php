@@ -71,23 +71,27 @@ try {
             $idts = '';
             //TODO: select ids first with condition | loop values
             foreach ($collegues as $colleague) {
-                $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE FIND_IN_SET($colleague, user_init_id)");
+                if ($colleague) {
+                    $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE FIND_IN_SET($colleague, user_init_id)");
 
-                $stmt->execute();
+                    $stmt->execute();
 
-                $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                $idts .= implode(',', f3pick($fetch, 'id'));
+                    $idts .= implode(',', f3pick($fetch, 'id'));
+                }
             }
 
             foreach ($departments as $department) {
-                $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE FIND_IN_SET($department, unit_id)");
+                if ($department) {
+                    $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE FIND_IN_SET($department, unit_id)");
 
-                $stmt->execute();
+                    $stmt->execute();
 
-                $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                $idts .= implode(',', f3pick($fetch, 'id'));
+                    $idts .= implode(',', f3pick($fetch, 'id'));
+                }
             }
 
             switch ($user['user']['priv']) {
