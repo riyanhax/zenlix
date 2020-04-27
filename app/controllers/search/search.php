@@ -94,6 +94,8 @@ try {
                 }
             }
 
+            funkit_setlog('idts', $idts);
+
             switch ($user['user']['priv']) {
                 case 0:
                     //$condition = "AND (user_init_id IN (" . implode(',', $collegues) . ") OR unit_id IN (" . implode(',', $departments) . "))";
