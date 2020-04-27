@@ -13,6 +13,7 @@ try {
     $loader = new Twig_Loader_Filesystem($CONF_HD['root'] . '/app/views');
     $twig   = new Twig_Environment($loader);
     $data   = [];
+    $idts   = [];
 
     switch ($_GET['mode']) {
         case 'archive':
@@ -68,68 +69,72 @@ try {
             $collegues   = f3pick($user['collegues'], 'uid');
             $departments = array_unique(f3pick($user['collegues'], 'unit'));
 
-            $idts = '';
             //TODO: select ids first with condition | loop values
             foreach ($collegues as $colleague) {
-                if ($colleague) {
-                    $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE user_init_id IN ($colleague)");
+                $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE user_init_id IN ($colleague)");
 
-                    $stmt->execute();
+                $stmt->execute();
 
-                    $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    $idts .= implode(',', f3pick($fetch, 'id'));
+                if ($fetch) {
+                    foreach ($fetch as $idt) {
+                        $idts[] = $idt['id'];
+                    }
                 }
             }
 
             foreach ($departments as $department) {
-                if ($department) {
-                    $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE unit_id IN ($department)");
+                $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE unit_id IN ($department)");
 
-                    $stmt->execute();
+                $stmt->execute();
 
-                    $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    $idts .= implode(',', f3pick($fetch, 'id'));
+                if ($fetch) {
+                    foreach ($fetch as $idt) {
+                        $idts[] = $idt['id'];
+                    }
                 }
             }
 
-            funkit_setlog('idts', $idts);
+            if (count($idts) > 0) {
+                $idts = implode(',', array_unique($idts));
 
-            switch ($user['user']['priv']) {
-                case 0:
-                    //$condition = "AND (user_init_id IN (" . implode(',', $collegues) . ") OR unit_id IN (" . implode(',', $departments) . "))";
-                    $condition = "AND t.id IN ($idts)";
-                    break;
-                case 2://everywhere
-                    $condition = "";
-                    break;
-            }
+                switch ($user['user']['priv']) {
+                    case 0:
+                        $condition = "AND t.id IN ($idts)";
+                        break;
+                    case 2://everywhere
+                        $condition = "";
+                        break;
+                }
 
-            $stmt = $dbConnection->prepare(
-                "SELECT t.id, t.user_init_id, t.user_to_id, t.date_create, t.subj, t.sabj_pl, t.msg, t.client_id, t.unit_id, t.status, t.hash_name, t.comment, t.is_read, t.lock_by, t.ok_by, t.ok_date
+                $stmt = $dbConnection->prepare(
+                    "SELECT t.id, t.user_init_id, t.user_to_id, t.date_create, t.subj, t.sabj_pl, t.msg, t.client_id, t.unit_id, t.status, t.hash_name, t.comment, t.is_read, t.lock_by, t.ok_by, t.ok_date
                             FROM tickets AS t
                             LEFT JOIN comments c ON t.id = c.t_id
                             WHERE arch <> :archive AND (t.id = :idt OR c.comment_text LIKE :a OR t.subj LIKE :b OR t.msg LIKE :msg) $condition GROUP BY t.id ORDER BY t.id DESC"
-            );
+                );
 
-            $stmt->execute([
-                ':archive' => 1,
-                ':idt'     => $input,
-                ':a'       => $input,
-                ':b'       => $input,
-                ':msg'     => $input,
-            ]);
+                $stmt->execute([
+                    ':archive' => 1,
+                    ':idt'     => $input,
+                    ':a'       => $input,
+                    ':b'       => $input,
+                    ':msg'     => $input,
+                ]);
 
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $userObserver = new UserObserver($dbConnection);
+                $userObserver = new UserObserver($dbConnection);
 
-            foreach ($data as $k => $row) {
-                $data[$k]['user_init_id'] = $userObserver->getUserData($row['user_init_id']);
-                $data[$k]['user_to_id']   = $userObserver->getUserData($row['user_to_id']);
-                $data[$k]['client_id']    = $userObserver->getUserData($row['client_id']);
-                $data[$k]['ok_by']        = $userObserver->getUserData($row['ok_by']);
+                foreach ($data as $k => $row) {
+                    $data[$k]['user_init_id'] = $userObserver->getUserData($row['user_init_id']);
+                    $data[$k]['user_to_id']   = $userObserver->getUserData($row['user_to_id']);
+                    $data[$k]['client_id']    = $userObserver->getUserData($row['client_id']);
+                    $data[$k]['ok_by']        = $userObserver->getUserData($row['ok_by']);
+                }
             }
 
             $template = $twig->loadTemplate('/tickets/out.view.tmpl');
