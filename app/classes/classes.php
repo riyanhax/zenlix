@@ -482,10 +482,10 @@ class SearchHelper
 {
     public static function inputHandler($input)
     {
-        if (preg_match('/.+(%)$/i', $input) === false) {
-            return $input . '%';
+        if (! preg_match('/.+(%)$/i', $input)) {
+            $input .= '%';
         }
-
+        
         return $input;
     }
 }
