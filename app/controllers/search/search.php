@@ -16,55 +16,13 @@ try {
     $data   = [];
     $idts   = [];
 
-    $input = SearchHelper::inputHandler($_GET['input']);
+    $input  = SearchHelper::inputHandler($_GET['input']);
 
-    switch ($_GET['mode']) {
-        case 'archive':
-            $user = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
-            $user = $user->getUserData('department:extended');
+    $user   = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
+    $user   = $user->getUserData('department:extended');
 
-            switch ($user['user']['priv']) {
-                case 0:
-                    $condition = "AND t.unit_id IN (".$user['user']['unit'].")";
-                    break;
-                case 2://everywhere
-                    $condition = "";
-                    break;
-            }
-
-            $stmt = $dbConnection->prepare(
-                "SELECT t.id, t.user_init_id, t.user_to_id, t.date_create, t.subj, t.sabj_pl, t.msg, t.client_id, t.unit_id, t.status, t.hash_name, t.comment, t.is_read, t.lock_by, t.ok_by, t.ok_date
-                            FROM tickets AS t
-                            LEFT JOIN comments c ON t.id = c.t_id
-                            WHERE t.arch = :archive AND t.id = :idt OR c.comment_text LIKE :a OR t.subj LIKE :b OR t.msg LIKE :msg $condition GROUP BY t.id ORDER BY t.id DESC"
-            );
-
-            $stmt->execute([
-                ':idt'     => $input,
-                ':a'       => $input,
-                ':b'       => $input,
-                ':msg'     => $input,
-                ':archive' => '1',
-            ]);
-
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            $userObserver = new UserObserver($dbConnection);
-
-            foreach ($data as $k => $row) {
-                $data[$k]['user_init_id'] = $userObserver->getUserData($row['user_init_id']);
-                $data[$k]['user_to_id']   = $userObserver->getUserData($row['user_to_id']);
-                $data[$k]['client_id']    = $userObserver->getUserData($row['client_id']);
-                $data[$k]['ok_by']        = $userObserver->getUserData($row['ok_by']);
-            }
-
-            $template = $twig->loadTemplate('/tickets/arch.view.tmpl');
-            break;
-
-        case 'out':
-            $user  = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
-            $user  = $user->getUserData('department:extended');
-
+    switch ($user['user']['priv']) {
+        case 0:
             $uids  = f3pick($user['collegues'], 'uid');
             $units = array_unique(f3pick($user['collegues'], 'unit'));
 
@@ -94,31 +52,32 @@ try {
                 }
             }
 
-            if (count($idts) > 0) {
-                $idts = implode(',', array_unique($idts));
+            $idts = implode(',', array_unique($idts));
 
-                switch ($user['user']['priv']) {
-                    case 0:
-                        $condition = "AND t.id IN ($idts)";
-                        break;
-                    case 2://everywhere
-                        $condition = "";
-                        break;
-                }
+            $condition = "AND t.id IN ($idts)";
+            break;
+        case 2://everywhere
+            $condition = "";
+            break;
+        default:
+            exit;
+    }
 
+    switch ($_GET['mode']) {
+        case 'archive':
                 $stmt = $dbConnection->prepare(
                     "SELECT t.id, t.user_init_id, t.user_to_id, t.date_create, t.subj, t.sabj_pl, t.msg, t.client_id, t.unit_id, t.status, t.hash_name, t.comment, t.is_read, t.lock_by, t.ok_by, t.ok_date
                             FROM tickets AS t
                             LEFT JOIN comments c ON t.id = c.t_id
-                            WHERE arch <> :archive AND (t.id = :idt OR c.comment_text LIKE :a OR t.subj LIKE :b OR t.msg LIKE :msg) $condition GROUP BY t.id ORDER BY t.id DESC"
+                            WHERE arch = :archive AND (t.id = :idt OR c.comment_text LIKE :a OR t.subj LIKE :b OR t.msg LIKE :msg) $condition GROUP BY t.id ORDER BY t.id DESC"
                 );
 
                 $stmt->execute([
-                    ':archive' => 1,
                     ':idt'     => $input,
                     ':a'       => $input,
                     ':b'       => $input,
                     ':msg'     => $input,
+                    ':archive' => '1',
                 ]);
 
                 $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -131,6 +90,35 @@ try {
                     $data[$k]['client_id']    = $userObserver->getUserData($row['client_id']);
                     $data[$k]['ok_by']        = $userObserver->getUserData($row['ok_by']);
                 }
+
+            $template = $twig->loadTemplate('/tickets/arch.view.tmpl');
+            break;
+
+        case 'out':
+            $stmt = $dbConnection->prepare(
+                "SELECT t.id, t.user_init_id, t.user_to_id, t.date_create, t.subj, t.sabj_pl, t.msg, t.client_id, t.unit_id, t.status, t.hash_name, t.comment, t.is_read, t.lock_by, t.ok_by, t.ok_date
+                            FROM tickets AS t
+                            LEFT JOIN comments c ON t.id = c.t_id
+                            WHERE arch <> :archive AND (t.id = :idt OR c.comment_text LIKE :a OR t.subj LIKE :b OR t.msg LIKE :msg) $condition GROUP BY t.id ORDER BY t.id DESC"
+            );
+
+            $stmt->execute([
+                ':archive' => 1,
+                ':idt'     => $input,
+                ':a'       => $input,
+                ':b'       => $input,
+                ':msg'     => $input,
+            ]);
+
+            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $userObserver = new UserObserver($dbConnection);
+
+            foreach ($data as $k => $row) {
+                $data[$k]['user_init_id'] = $userObserver->getUserData($row['user_init_id']);
+                $data[$k]['user_to_id']   = $userObserver->getUserData($row['user_to_id']);
+                $data[$k]['client_id']    = $userObserver->getUserData($row['client_id']);
+                $data[$k]['ok_by']        = $userObserver->getUserData($row['ok_by']);
             }
 
             $template = $twig->loadTemplate('/tickets/out.view.tmpl');
