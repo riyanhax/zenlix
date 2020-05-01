@@ -437,12 +437,9 @@ class UserHelper
 
                     foreach ($units as $unit) {
                         $stmt = $this->dbConnection->prepare(
-                            'SELECT id as uid, unit FROM users WHERE unit IN (:unit)'
+                            "SELECT id as uid, unit FROM users WHERE unit IN ($unit)"
                         );
-
-                        $stmt->execute([
-                            ':unit' => $unit
-                        ]);
+                        $stmt->execute();
 
                         $colleagues = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -450,7 +447,7 @@ class UserHelper
                             $response['collegues'][] = $colleague;
                         }
                     }
-                    
+
                     $response['user'] = $user;
                 }
 

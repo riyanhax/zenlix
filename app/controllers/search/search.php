@@ -66,13 +66,12 @@ try {
 
             $input = str_replace('%', '', $_GET['input']) . '%';
 
-            $collegues   = f3pick($user['collegues'], 'uid');
-            $departments = array_unique(f3pick($user['collegues'], 'unit'));
+            $uids  = f3pick($user['collegues'], 'uid');
+            $units = array_unique(f3pick($user['collegues'], 'unit'));
 
             //TODO: select ids first with condition | loop values
-            foreach ($collegues as $colleague) {
-                $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE user_init_id IN ($colleague)");
-
+            foreach ($uids as $uid) {
+                $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE user_init_id IN ($uid)");
                 $stmt->execute();
 
                 $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -84,9 +83,8 @@ try {
                 }
             }
 
-            foreach ($departments as $department) {
+            foreach ($units as $department) {
                 $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE unit_id IN ($department)");
-
                 $stmt->execute();
 
                 $fetch = $stmt->fetchAll(PDO::FETCH_ASSOC);
