@@ -7,8 +7,6 @@
  */
 $base = dirname(dirname(dirname(__FILE__)));
 
-include ($base . "/arava_tools.php");
-
 class EventsReport
 {
     protected $events =
