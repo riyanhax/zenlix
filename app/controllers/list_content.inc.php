@@ -927,8 +927,6 @@ if (isset($_POST['menu'])) {
 
         $res1 = $stmt->fetchAll();
 
-        funkit_setlog('SESSION', $_SESSION);
-
         $aha = get_total_pages('in', $uid);
 
         if (isset($noRules) && $noRules === true) {
