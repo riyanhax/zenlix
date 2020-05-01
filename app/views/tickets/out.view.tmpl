@@ -30,8 +30,6 @@
                     <th>Создано</th>
                     <th>Создатель</th>
                     <th>Исполнитель</th>
-                    <th>Выполнил</th>
-                    <th>Выполнено</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -43,8 +41,6 @@
                         <td>{{ value.date_create }}</td>
                         <td><a href="view_user?{{ value.user_init_id.uniq_id }}">{{  value.user_init_id.login }}</a></td>
                         <td><a href="view_user?{{ value.user_to_id.uniq_id }}">{{ value.user_to_id.login }}</a></td>
-                        <td><a href="view_user?{{ value.ok_by.uniq_id }}">{{ value.ok_by.login }}</a></td>
-                        <td>{{ value.ok_date }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
