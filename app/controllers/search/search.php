@@ -67,7 +67,7 @@ try {
 
             $uids  = f3pick($user['collegues'], 'uid');
             $units = array_unique(f3pick($user['collegues'], 'unit'));
-            
+
             foreach ($uids as $uid) {
                 $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE user_init_id IN ($uid)");
                 $stmt->execute();
