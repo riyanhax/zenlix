@@ -8,6 +8,7 @@ require_once $CONF_HD['root'] . '/app/controllers/head.inc.php';
 require_once $CONF_HD['root'] . '/app/controllers/navbar.inc.php';
 
 try {
+    require_once $CONF_HD['root'] . '/app/classes/classes.php';
     require_once $CONF_HD['root'] . '/library/Twig/Autoloader.php';
 
     $loader = new Twig_Loader_Filesystem($CONF_HD['root'] . '/app/views');
@@ -15,12 +16,12 @@ try {
     $data   = [];
     $idts   = [];
 
+    $input = SearchHelper::inputHandler($_GET['input']);
+
     switch ($_GET['mode']) {
         case 'archive':
             $user = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
             $user = $user->getUserData('department:extended');
-
-            $input = str_replace('%', '', $_GET['input']) . '%';
 
             switch ($user['user']['priv']) {
                 case 0:
@@ -61,15 +62,12 @@ try {
             break;
 
         case 'out':
-            $user = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
-            $user = $user->getUserData('department:extended');
-
-            $input = str_replace('%', '', $_GET['input']) . '%';
+            $user  = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
+            $user  = $user->getUserData('department:extended');
 
             $uids  = f3pick($user['collegues'], 'uid');
             $units = array_unique(f3pick($user['collegues'], 'unit'));
-
-            //TODO: select ids first with condition | loop values
+            
             foreach ($uids as $uid) {
                 $stmt = $dbConnection->prepare("SELECT t.id FROM tickets t WHERE user_init_id IN ($uid)");
                 $stmt->execute();

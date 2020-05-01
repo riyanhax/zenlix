@@ -477,3 +477,13 @@ class UserObserver
         return $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
     }
 }
+
+class SearchHelper
+{
+    public static function inputHandler($input)
+    {
+        if (preg_match('/.+(%)$/i', $input) === false) {
+            return $input . '%';
+        }
+    }
+}
