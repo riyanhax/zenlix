@@ -485,5 +485,7 @@ class SearchHelper
         if (preg_match('/.+(%)$/i', $input) === false) {
             return $input . '%';
         }
+
+        return $input;
     }
 }
