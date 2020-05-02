@@ -352,7 +352,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
             'newtickets' => $newtickets,
             'status_out' => $status_out,
             'LIST_out' => lang('LIST_out') ,
-            'out_tickets' => count($res1),
+            'out_tickets' => isset($tickets) ? count($tickets['full']) : count($res1),
             'status_arch' => $status_arch,
             'LIST_arch' => lang('LIST_arch') ,
             'LIST_loading' => lang('LIST_loading') ,
