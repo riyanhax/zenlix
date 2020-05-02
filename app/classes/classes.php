@@ -487,3 +487,36 @@ class SearchHelper
         return $input;
     }
 }
+
+class TicketHelper {
+    protected $dbConnection;
+
+    public function __construct($dbConnection = [])
+    {
+        $this->dbConnection = $dbConnection;
+    }
+
+    public static function paging($countOfTickets, $perpage)
+    {
+        if ($countOfTickets <> 0) {
+            return ceil($countOfTickets / $perpage);
+        } else {
+            return 0;
+        }
+    }
+
+    public function receiver(string $sql, array $params, array $limits = [])
+    {
+        $fullSTMT    = $this->dbConnection->prepare($sql);
+        $limitedSTMT = $this->dbConnection->prepare($sql . ' LIMIT ' . $limits['start'] . ', ' . $limits['perpage']);
+
+        $fullSTMT->execute($params);
+
+        $limitedSTMT->execute($params);
+
+        return [
+            'full'    => $fullSTMT->fetchAll(PDO::FETCH_ASSOC),
+            'limited' => $limitedSTMT->fetchAll(PDO::FETCH_ASSOC),
+        ];
+    }
+}

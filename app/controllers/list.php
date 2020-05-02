@@ -333,7 +333,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
 
         // подгружаем шаблон
         $template = $twig->loadTemplate('list.view.tmpl');
-        
+
         // передаём в шаблон переменные и значения
         // выводим сформированное содержание
         echo $template->render(array(
@@ -352,7 +352,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
             'newtickets' => $newtickets,
             'status_out' => $status_out,
             'LIST_out' => lang('LIST_out') ,
-            'out_tickets' => $out_tickets,
+            'out_tickets' => count($res1),
             'status_arch' => $status_arch,
             'LIST_arch' => lang('LIST_arch') ,
             'LIST_loading' => lang('LIST_loading') ,
@@ -380,7 +380,7 @@ if (validate_user($_SESSION['helpdesk_user_id'], $_SESSION['code'])) {
             'nn' => $nn,
             'menu' => $_POST['menu'],
             'r' => $r, // sort in or out
-            'get_total_pages_menu' => get_total_pages($_POST['menu'], $user_id),
+            'get_total_pages_menu' => TicketHelper::paging(isset($tickets) ? count($tickets['full']) : count($res1), $perpage),//get_total_pages($_POST['menu'], $user_id),
             'last_ticket' => get_last_ticket($_POST['menu'], $user_id) ,
             'list_tables' => $list_tables,
             'no_long_term' => $_SESSION['hd.no_display'],

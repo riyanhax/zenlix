@@ -13,6 +13,8 @@ if (isset($_POST['menu'])) {
     $stmt->execute();
     $ticketTypes = $stmt->fetchAll();
 
+    $TicketHelper = new TicketHelper($dbConnection);
+
     $types = f3pick($ticketTypes,'id'); // got all tickets types
 
     if ($_SESSION['hd.no_display'] === 'no_long_term') {
@@ -102,22 +104,18 @@ if (isset($_POST['menu'])) {
         if ($_SESSION['hd.rustem_sort_out'] === 'activity_24_hours') {
             try {
                 $noRules = true;
-                $stmt = $dbConnection->prepare(
-                    "SELECT ticket_id FROM ticket_log WHERE (UNIX_TIMESTAMP(date_op) + 86400) > UNIX_TIMESTAMP(NOW()) AND init_user_id IN ($collegues) GROUP BY ticket_id"
-                );
-                $stmt->execute();
-                $idts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                $idts = f3pick($idts,'ticket_id');
+                $sql = "SELECT ticket_id FROM ticket_log WHERE (UNIX_TIMESTAMP(date_op) + 86400) > UNIX_TIMESTAMP(NOW()) AND init_user_id IN ($collegues) GROUP BY ticket_id";
+
+                $tickets = $TicketHelper->receiver($sql, [], ['start' => $start_pos, 'perpage' => $perpage]);
+
+                $tickets = f3pick($tickets['full'],'ticket_id');
 
                 if ($idts) {
-                    $idts  = implode(',', $idts);
-                    $stmt  = $dbConnection->prepare(
-                        "SELECT t.* FROM tickets AS t
-                        WHERE t.id IN ($idts) AND status <> 3"
-                    );
+                    $idts = implode(',', $idts);
+                    $sql  = "SELECT t.* FROM tickets AS t WHERE t.id IN ($idts) AND status <> 3";
 
-                    $stmt->execute();
+                    $tickets = $TicketHelper->receiver($sql, [], ['start' => $start_pos, 'perpage' => $perpage]);
                 }
             } catch (Exception $e) {}
         }
@@ -125,17 +123,11 @@ if (isset($_POST['menu'])) {
         /* WARNING: if rules no matter for user, `aha` variable should be 1 */
         if ($_SESSION['hd.rustem_sort_out'] === 'personal') { // for personal mode
             $noRules = true;
-            //var_dump(' --------- personal');
-            $stmt = $dbConnection->prepare(
-                "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
-                WHERE arch = 0 AND status = 0 AND user_to_id = :uid AND s.id IN ($types) 
-                LIMIT :start_pos, :perpage");
 
-            $stmt->execute([
-                ':uid'       => $uid,
-                ':start_pos' => $start_pos,
-                ':perpage'   => $perpage
-            ]);
+            $sql = "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj=s.name
+                    WHERE arch = 0 AND status = 0 AND user_to_id = :uid AND s.id IN ($types)";
+
+            $tickets = $TicketHelper->receiver($sql, [':uid' => $uid], ['start' => $start_pos, 'perpage' => $perpage]);
         }
 
         if ($ps == "2" && $noRules === false) {
@@ -201,59 +193,32 @@ if (isset($_POST['menu'])) {
         } else if ($ps == "0" && $noRules === false) {
             if (isset($_SESSION['hd.rustem_sort_out'])) {
                 if ($_SESSION['hd.rustem_sort_out'] == "ok") {
-                    $stmt = $dbConnection->prepare(
-                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
-                         WHERE user_init_id IN ($collegues) AND arch = 0 AND status = 1 AND s.id IN ($types)
-                         LIMIT :start_pos, :perpage"
-                    );
+                    $sql = "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
+                            WHERE user_init_id IN ($collegues) AND arch <> 1 AND status = 1 AND s.id IN ($types)";
 
-                    $stmt->execute([
-                        ':start_pos' => $start_pos,
-                        ':perpage'   => $perpage
-                    ]);
+                    $tickets = $TicketHelper->receiver($sql, [], ['start' => $start_pos, 'perpage' => $perpage]);
                 } else if ($_SESSION['hd.rustem_sort_out'] == "free") {
-                    $stmt = $dbConnection->prepare(
-                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
-                                    WHERE user_init_id IN ($collegues) AND arch = 0 AND lock_by = 0 AND status = 0 AND s.id IN ($types)
-                                    LIMIT :start_pos, :perpage");
+                    $sql = "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
+                            WHERE user_init_id IN ($collegues) AND arch <> 1 AND lock_by = 0 AND status = 0 AND s.id IN ($types)";
 
-                    $stmt->execute([
-                        ':start_pos' => $start_pos,
-                        ':perpage'   => $perpage
-                    ]);
+                    $tickets = $TicketHelper->receiver($sql, [], ['start' => $start_pos, 'perpage' => $perpage]);
                 } else if ($_SESSION['hd.rustem_sort_out'] == "ilock") {
-                    $stmt = $dbConnection->prepare(
-                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
-                                    WHERE user_init_id IN ($collegues) AND arch = 0 AND lock_by = :uid AND s.id IN ($types) AND status = 0
-                                    LIMIT :start_pos, :perpage");
+                    $sql = "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
+                            WHERE user_init_id IN ($collegues) AND arch <> 1 AND lock_by = $uid AND s.id IN ($types) AND status = 0";
 
-                    $stmt->execute([
-                        ':uid'       => $uid,
-                        ':start_pos' => $start_pos,
-                        ':perpage'   => $perpage
-                    ]);
+                    $tickets = $TicketHelper->receiver($sql, [':uid' => $uid], ['start' => $start_pos, 'perpage' => $perpage]);
                 } else if ($_SESSION['hd.rustem_sort_out'] == "lock") {
-                    $stmt = $dbConnection->prepare(
-                        "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
-                                    WHERE user_init_id IN ($collegues) AND arch = 0 AND (lock_by <> :uid AND lock_by <> 0) AND (status = 0) AND s.id IN ($types) 
-                                    LIMIT :start_pos, :perpage");
+                    $sql = "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name 
+                            WHERE user_init_id IN ($collegues) AND arch <> 0 AND lock_by <> :uid AND lock_by <> 1 AND (status = 0) AND s.id IN ($types)";
 
-                    $stmt->execute([
-                        ':uid'       => $uid,
-                        ':start_pos' => $start_pos,
-                        ':perpage'   => $perpage
-                    ]);
+                    $tickets = $TicketHelper->receiver($sql, [':uid' => $uid], ['start' => $start_pos, 'perpage' => $perpage]);
                 }
             } elseif (! isset($_SESSION['hd.rustem_sort_out'])) {
-                $stmt = $dbConnection->prepare(
-                    "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name  
-                                WHERE user_init_id IN ($collegues) OR unit_id IN($colleguesDepartments) AND arch = 0 AND s.id IN ($types) AND status = 0
-                                ORDER BY $order_l LIMIT :start_pos, :perpage");
+                $sql = "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name  
+                        WHERE (user_init_id IN ($collegues) OR unit_id IN($colleguesDepartments)) AND arch <> 1 AND s.id IN ($types) AND status = 0
+                        ORDER BY $order_l";
 
-                $stmt->execute([
-                    ':start_pos' => $start_pos,
-                    ':perpage'   => $perpage
-                ]);
+                $tickets = $TicketHelper->receiver($sql, [], ['start' => $start_pos, 'perpage' => $perpage]);
             }
         } else if ($ps == "1" && $noRules === false) {
             if (isset($_SESSION['hd.rustem_sort_out'])) {
@@ -332,8 +297,12 @@ if (isset($_POST['menu'])) {
         }
         
         //or id in (LIST TICKET_ID)
-        
-        $res1 = $stmt->fetchAll();
+
+        if (isset($tickets)) {
+            $res1 = $tickets['limited'];
+        } else {
+            $res1 = $stmt->fetchAll();
+        }
         
         $aha = get_total_pages('out', $uid);
         if (isset($noRules) && $noRules === true) {
@@ -549,7 +518,7 @@ if (isset($_POST['menu'])) {
             // передаём в шаблон переменные и значения
             // выводим сформированное содержание
             echo $template->render(array(
-                'get_total_pages_out' => get_total_pages('out', $uid) ,
+                'get_total_pages_out' => get_total_pages('out', $uid),
                 'sort_type_start_id' => $sort_type_start['id'],
                 'sort_type_stop_id' => $sort_type_stop['id'],
                 'sort_type_start_prio' => $sort_type_start['prio'],
