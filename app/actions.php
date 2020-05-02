@@ -8908,18 +8908,14 @@ VALUES (:fio, :login, :tel, :adr, :email, :posada,:skype,:type_op, :user_from, :
             $user = ($_POST['user']);
             $idt  = ($_POST['tid']);
 
-            $stmt = $dbConnection->prepare(
-                    'UPDATE tickets SET status = :cancel WHERE id = :id'
+            $stmt = $dbConnection->prepare('UPDATE tickets SET status = :cancel WHERE id = :id');
 
-            );
             $stmt->execute(array(
                 ':cancel' => 3,
                 ':id'     => $idt,
             ));
 
-            $stmt = $dbConnection->prepare(
-                    'INSERT INTO ticket_log (date_op,msg,init_user_id,ticket_id) VALUES (:d, :msg,:uid,:idt)'
-            );
+            $stmt = $dbConnection->prepare('INSERT INTO ticket_log (date_op , msg, init_user_id, ticket_id) VALUES (:d, :msg,:uid,:idt)');
             $stmt->execute(array(
                     ':d'   => $CONF['now_dt'],
                     ':msg' => 'canceled',
