@@ -215,7 +215,7 @@ if (isset($_POST['menu'])) {
                 }
             } elseif (! isset($_SESSION['hd.rustem_sort_out'])) {
                 $sql = "SELECT t.* FROM tickets AS t LEFT JOIN subj AS s ON t.subj = s.name  
-                        WHERE (user_init_id IN ($collegues) OR unit_id IN($colleguesDepartments)) AND arch <> 1 AND s.id IN ($types) AND status = 0
+                        WHERE (user_init_id IN ($collegues)/* OR unit_id IN($colleguesDepartments)*/) AND arch <> 1 AND s.id IN ($types) AND status = 0
                         ORDER BY $order_l";
 
                 $tickets = $TicketHelper->receiver($sql, [], ['start' => $start_pos, 'perpage' => $perpage]);

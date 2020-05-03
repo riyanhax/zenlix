@@ -6973,12 +6973,14 @@ $.ajax({
     };
 
     $('#search-btn').on('click', function (event) {
+        let minLength = 2;
+
         if (window.location.href.match(/list\?arch/g) || window.location.href.match(/mode=archive/gi)) {
             event.preventDefault();
 
             let input = document.getElementById('search').value;
 
-            if (input.length >= 4 || input.match(/^[0-9]+$/i)) {
+            if (input.length >= minLength || input.match(/^[0-9]+$/i)) {
                 window.location.href = '/search?input=' + input + '&mode=archive';
             }
         }
@@ -6988,7 +6990,7 @@ $.ajax({
 
             let input = document.getElementById('search').value;
 
-            if (input.length >= 4) {
+            if (input.length >= minLength) {
                 window.location.href = '/search?input=' + input + '&mode=out';
             }
         }
