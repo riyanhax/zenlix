@@ -1,4 +1,5 @@
 <?php
+opcache_reset();
 
 global $CONF_HD;
 
