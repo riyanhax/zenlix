@@ -480,6 +480,10 @@ class SearchHelper
 {
     public static function inputHandler($input)
     {
+        if (! preg_match('/^%/i', $input)) {
+            $input = '%' . $input;
+        }
+
         if (! preg_match('/.+(%)$/i', $input)) {
             $input .= '%';
         }
