@@ -18,6 +18,9 @@ try {
 
     $input  = SearchHelper::inputHandler($_GET['input']);
 
+    var_dump($input);
+    exit;
+
     $user   = new UserHelper($_SESSION['helpdesk_user_id'], $dbConnection);
     $user   = $user->getUserData('department:extended');
 
