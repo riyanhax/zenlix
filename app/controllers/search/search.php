@@ -74,7 +74,7 @@ try {
             );
 
             $stmt->execute([
-                ':idt'     => $input,
+                ':idt'     => str_replace('%', '', $input),
                 ':a'       => $input,
                 ':b'       => $input,
                 ':msg'     => $input,
@@ -133,7 +133,7 @@ try {
 
             $stmt->execute([
                 ':archive' => 1,
-                ':idt'     => $input,
+                ':idt'     => str_replace('%', '', $input),
                 ':a'       => $input,
                 ':b'       => $input,
                 ':msg'     => $input,
